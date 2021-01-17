@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <windows.h>
+#include <locale.h>
 
 #define SIZE 300
 
@@ -30,8 +31,9 @@ typedef struct {
 
 
 int main() {
-    SetConsoleCP(1251);
-    SetConsoleOutputCP(1251);
+    setlocale(0, "");
+
+    printf("Привет, мир!\n");
 
     FILE *weather = fopen("weatherExample.txt", "r");
     if (weather == NULL) {
