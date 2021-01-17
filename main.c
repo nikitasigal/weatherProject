@@ -1,8 +1,6 @@
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 #include <windows.h>
-#include <locale.h>
 
 #define SIZE 300
 
@@ -31,9 +29,10 @@ typedef struct {
 
 
 int main() {
-    setlocale(0, "");
+    SetConsoleCP(CP_UTF8);
+    SetConsoleOutputCP(CP_UTF8);
 
-    printf("Привет, мир!\n");
+    printf("РџСЂРёРІРµС‚, РјРёСЂ!\n");
 
     FILE *weather = fopen("weatherExample.txt", "r");
     if (weather == NULL) {
@@ -48,7 +47,7 @@ int main() {
     DAY prevDay;
     int countDays = 0;
 
-    while(!feof(weather)) {
+    while (!feof(weather)) {
         if (countDays != 0) {
             prevDay.date.year = curDay.date.year;
             prevDay.date.month = curDay.date.month;
