@@ -1,3 +1,10 @@
 # Project exclude paths
 /cmake-build-debug/CMakeFiles/
 /cmake-build-debug/Testing/
+/cmake-build-debug/cmake_install.cmake
+/cmake-build-debug/CMakeCache.txt
+/cmake-build-debug/Makefile
+/cmake-build-debug/weatherProject.cbp
+/cmake-build-debug/weatherProject.exe
+/cmake-build-debug/weatherProject.ilk
+/cmake-build-debug/weatherProject.pdb
