@@ -2,29 +2,32 @@
 #include <string.h>
 #include <windows.h>
 
+// Size of most arrays
 #define SIZE 300
 
+// Local structure for storing a date
 typedef struct {
     int day, month, year;
 } Date;
 
+// Local structure for storing a minimum and maximum value
 typedef struct {
     int low, high;
 } LOW_HIGH;
 
 typedef struct {
-    Date date;
-    LOW_HIGH tempNight;
-    LOW_HIGH tempDay;
-    LOW_HIGH tempSense;
-    char precipitation[SIZE];
-    LOW_HIGH speed;
-    char direction[SIZE];
-    LOW_HIGH gusts;
-    int pressure;
+    Date date;                  // Дата
+    LOW_HIGH tempNight;         // Температура ночью
+    LOW_HIGH tempDay;           // Температура днём
+    LOW_HIGH tempSense;         // Ощущается
+    char precipitation[SIZE];   // Осадки
+    LOW_HIGH speed;             // Скорость ветра
+    char direction[SIZE];       // Направление ветра
+    LOW_HIGH gusts;             // Порывы ветра
+    int pressure;               // Давление
 
-    char scene[10][SIZE];
-    int sceneCount;
+    char scene[10][SIZE];       // Явления
+    int sceneCount;             // Количество явлений (ограничение: 6 явлений)
 } DAY;
 
 
@@ -34,20 +37,27 @@ int main() {
 
     printf("Привет, мир!\n");
 
-    FILE *weather = fopen("data.txt", "r");
-    if (weather == NULL) {
+    FILE *data = fopen("data.txt", "r");
+    FILE *weather = fopen("weatherExample.txt", "r");
+    if (data == NULL) {
         printf("Error: file was not opened.");
         return 0;
     }
+    if (weather == NULL) {  // Trying to open a file
+        printf("Error: file was not opened.");
+        return 0;
+    }
+
     char tempString[SIZE];
-    fgets(tempString, SIZE, weather);
+    fgets(tempString, SIZE, weather); // Shift a carriage to the next line
 
     char date[SIZE], tempNight[SIZE], tempDay[SIZE], tempSense[SIZE], precipitation[SIZE], speed[SIZE], direction[SIZE], gusts[SIZE], pressure[SIZE], scene[SIZE];
-    DAY curDay;
-    DAY prevDay;
-    int countDays = 0;
+    DAY curDay;     // Текущий день
+    DAY prevDay;    // Предыдущий день
+    int countDays = 0;  // Количество дней
 
     while (!feof(weather)) {
+        // Copy curDay struct to prevDay (excepting the first day)
         if (countDays != 0) {
             prevDay.date.year = curDay.date.year;
             prevDay.date.month = curDay.date.month;
@@ -80,16 +90,19 @@ int main() {
             prevDay.sceneCount = curDay.sceneCount;
         }
 
+        // Reading a line and write it into temporary variables (for comfortable)
         char currentString[SIZE];
         fgets(currentString, SIZE, weather);
         sscanf(currentString, "%s%s%s%s%s%s%s%s%s%s", date, tempNight, tempDay, tempSense, precipitation, speed, direction, gusts, pressure, scene);
         //printf("%s %s %s %s %s %s %s %s %s %s\n", date, tempNight, tempDay, tempSense, precipitation, speed, direction, gusts, pressure, scene);
 
+
+        // Parsing every column data to struct
         sscanf(date, "%d.%d.%d", &curDay.date.day, &curDay.date.month, &curDay.date.year);
         //printf("%d.%d.%d\n", curDay.date.day, curDay.date.month, curDay.date.year);
 
         int countTempNight = sscanf(tempNight, "%d..%d", &curDay.tempNight.low, &curDay.tempNight.high);
-        if (countTempNight == 1)
+        if (countTempNight == 1)    // If there is only one number in column, then maximum = minimum
             curDay.tempNight.high = curDay.tempNight.low;
         //printf("%d  %d\n", curDay.tempNight.low, curDay.tempNight.high);
 
@@ -130,11 +143,12 @@ int main() {
         //    printf("%s\n", curDay.scene[i]);
         //}
 
+        // End of parsing and increasing of countDays by one
         ++countDays;
     }
 
     // pattern for previous day output and current day output
-    printf("Prev Day:\n");
+    /*printf("Prev Day:\n");
     printf("%d %d %d | %d %d | %d %d | %d %d | %s | %d %d | %s | %d %d | %d | ", prevDay.date.day, prevDay.date.month,
            prevDay.date.year, prevDay.tempNight.low, prevDay.tempNight.high, prevDay.tempDay.low, prevDay.tempDay.high,
            prevDay.tempSense.low, prevDay.tempSense.high, prevDay.precipitation, prevDay.speed.low, prevDay.speed.high,
@@ -151,7 +165,7 @@ int main() {
 
     for (int i = 0; i < curDay.sceneCount; ++i) {
         printf("%s ", curDay.scene[i]);
-    }
+    }*/
 
     fclose(weather);
 }
