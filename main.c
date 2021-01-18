@@ -38,25 +38,20 @@ int main() {
     printf("Привет, мир!\n");
 
     FILE *data = fopen("data.txt", "r");
-    FILE *weather = fopen("weatherExample.txt", "r");
     if (data == NULL) {
-        printf("Error: file was not opened.");
-        return 0;
-    }
-    if (weather == NULL) {  // Trying to open a file
         printf("Error: file was not opened.");
         return 0;
     }
 
     char tempString[SIZE];
-    fgets(tempString, SIZE, weather); // Shift a carriage to the next line
+    fgets(tempString, SIZE, data); // Shift a carriage to the next line
 
     char date[SIZE], tempNight[SIZE], tempDay[SIZE], tempSense[SIZE], precipitation[SIZE], speed[SIZE], direction[SIZE], gusts[SIZE], pressure[SIZE], scene[SIZE];
     DAY curDay;     // Текущий день
     DAY prevDay;    // Предыдущий день
     int countDays = 0;  // Количество дней
 
-    while (!feof(weather)) {
+    while (!feof(data)) {
         // Copy curDay struct to prevDay (excepting the first day)
         if (countDays != 0) {
             prevDay.date.year = curDay.date.year;
@@ -92,7 +87,7 @@ int main() {
 
         // Reading a line and write it into temporary variables (for comfortable)
         char currentString[SIZE];
-        fgets(currentString, SIZE, weather);
+        fgets(currentString, SIZE, data);
         sscanf(currentString, "%s%s%s%s%s%s%s%s%s%s", date, tempNight, tempDay, tempSense, precipitation, speed, direction, gusts, pressure, scene);
         //printf("%s %s %s %s %s %s %s %s %s %s\n", date, tempNight, tempDay, tempSense, precipitation, speed, direction, gusts, pressure, scene);
 
@@ -167,5 +162,5 @@ int main() {
         printf("%s ", curDay.scene[i]);
     }*/
 
-    fclose(weather);
+    fclose(data);
 }
