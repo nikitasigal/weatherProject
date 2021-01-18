@@ -34,7 +34,7 @@ int main() {
 
     printf("Привет, мир!\n");
 
-    FILE *weather = fopen("weatherExample.txt", "r");
+    FILE *weather = fopen("data.txt", "r");
     if (weather == NULL) {
         printf("Error: file was not opened.");
         return 0;
