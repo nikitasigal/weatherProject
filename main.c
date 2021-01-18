@@ -35,7 +35,14 @@ int main() {
     SetConsoleCP(CP_UTF8);
     SetConsoleOutputCP(CP_UTF8);
 
+    printf("Привет, мир!\n");
+
+    FILE *data = fopen("data.txt", "r");
     FILE *weather = fopen("weatherExample.txt", "r");
+    if (data == NULL) {
+        printf("Error: file was not opened.");
+        return 0;
+    }
     if (weather == NULL) {  // Trying to open a file
         printf("Error: file was not opened.");
         return 0;
