@@ -37,7 +37,7 @@ int main() {
 
     printf("Привет, мир!\n");
 
-    FILE *data = fopen("data.txt", "r");
+    FILE *data = fopen("Data Source/data.txt", "r");
     if (data == NULL) {
         printf("Error: file was not opened.");
         return 0;
