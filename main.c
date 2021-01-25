@@ -1,170 +1,104 @@
+/*
+ *  Основные массивы для данных (из dataParse.h):
+ *     - curDate - структура даты текущего дня, имеет параметры day, month, year (curDate.day etc.)
+ *     - prevDate - структура даты предыдущего дня (отсутствует для первого дня)
+ *
+ *     - curDayNums[11] - массив с числовыми данными текущего дня:
+ *          • 0 - нижний порог ночной температуры
+ *          • 1 - верхний порог ночной температуры
+ *          • 2 - нижний порог дневной температуры
+ *          • 3 - верхний порог дневной температуры
+ *          • 4 - нижний порог ощущения температуры
+ *          • 5 - верхний порог ощущения температуры
+ *          • 6 - нижний порог скорости ветра
+ *          • 7 - верхний порог скорости ветра
+ *          • 8 - нижний порог порывов ветра
+ *          • 9 - верхний поров порывов ветра
+ *          • 10 - давление
+ *          Если в данных только одно число, то нижний порог = верхнему порогу = числу
+ *
+ *     - curDayStr[3][6][300] - массив с строковыми данными текущего дня. Первый индекс - категория, второй - слово (не больше 6),
+ *       третий - максимальная техническая длина строки:
+ *          • 0 - категория "осадки" (всегда одно слово. Предполагаю, что несколько видов осадков быть не может)
+ *          • 1 - направление ветра
+ *          • 2 - явления
+ *
+ *     - prevDayNums[11] - массив с числовыми данными ПРЕДЫДУЩЕГО дня
+ *     - prevDayStr[11] - массив с числовыми данными ПРЕДЫДУЩЕГО дня
+ *
+ *      Возможно, бесполезные переменные:
+ *          int curCountDirections; // Количество направлений ветра в день. Нужно для переопределения предыдущего дня
+ *          int curCountScenes;     // Количество явлений в день. Нужно для переопределения предыдущего дня
+ *          int prevCountDirections;
+ *          int prevCountScenes;
+ *          int countDays;  // Количество дней
+ */
+
 #include <stdio.h>
 #include <string.h>
 #include <windows.h>
 
+#include "sharedConstants.h"
 #include "constantParser.h"
-
-// Size of most arrays
-#define SIZE 300
-
-// Local structure for storing a date
-typedef struct {
-    int day, month, year;
-} Date;
-
-// Local structure for storing a minimum and maximum value
-typedef struct {
-    int low, high;
-} LOW_HIGH;
-
-typedef struct {
-    Date date;                  // Дата
-    LOW_HIGH tempNight;         // Температура ночью
-    LOW_HIGH tempDay;           // Температура днём
-    LOW_HIGH tempSense;         // Ощущается
-    char precipitation[SIZE];   // Осадки
-    LOW_HIGH speed;             // Скорость ветра
-    char direction[SIZE];       // Направление ветра
-    LOW_HIGH gusts;             // Порывы ветра
-    int pressure;               // Давление
-
-    char scene[10][SIZE];       // Явления
-    int sceneCount;             // Количество явлений (ограничение: 6 явлений)
-} DAY;
-
+#include "dataParser.h"
 
 int main() {
     SetConsoleCP(CP_UTF8);
     SetConsoleOutputCP(CP_UTF8);
 
+    //global files parse
     constantParse();
 
-    printf("%s", Temperature.group[5].tmp[4]);
-
+    //opening forecast data file
     FILE *data = fopen("Forecast Data/data.txt", "r");
     if (data == NULL) {
         printf("Error: file was not opened.");
         return 0;
     }
 
-    char tempString[SIZE];
-    fgets(tempString, SIZE, data); // Shift a carriage to the next line
+    char currentString[STRING_SIZE] = {0}; // I think everyone knows what is this for
+    fgets(currentString, STRING_SIZE, data); // skipping the first lines with table headings
 
-    char date[SIZE], tempNight[SIZE], tempDay[SIZE], tempSense[SIZE], precipitation[SIZE], speed[SIZE], direction[SIZE], gusts[SIZE], pressure[SIZE], scene[SIZE];
-    DAY curDay;     // Текущий день
-    DAY prevDay;    // Предыдущий день
-    int countDays = 0;  // Количество дней
-
-    while (!feof(data)) {
-        // Copy curDay struct to prevDay (excepting the first day)
-        if (countDays != 0) {
-            prevDay.date.year = curDay.date.year;
-            prevDay.date.month = curDay.date.month;
-            prevDay.date.day = curDay.date.day;
-
-            prevDay.tempNight.low = curDay.tempNight.low;
-            prevDay.tempNight.high = curDay.tempNight.high;
-
-            prevDay.tempDay.low = curDay.tempDay.low;
-            prevDay.tempDay.high = curDay.tempDay.high;
-
-            prevDay.tempSense.low = curDay.tempSense.low;
-            prevDay.tempSense.high = curDay.tempSense.high;
-
-            strcpy(prevDay.precipitation, curDay.precipitation);
-
-            prevDay.speed.low = curDay.speed.low;
-            prevDay.speed.high = curDay.speed.high;
-
-            strcpy(prevDay.direction, curDay.direction);
-
-            prevDay.gusts.low = curDay.gusts.low;
-            prevDay.gusts.high = curDay.gusts.high;
-
-            prevDay.pressure = curDay.pressure;
-
-            for (int i = 0; i < curDay.sceneCount; ++i)
-                strcpy(prevDay.scene[i], curDay.scene[i]);
-
-            prevDay.sceneCount = curDay.sceneCount;
-        }
-
-        // Reading a line and write it into temporary variables (for comfortable)
-        char currentString[SIZE];
-        fgets(currentString, SIZE, data);
-        sscanf(currentString, "%s%s%s%s%s%s%s%s%s%s", date, tempNight, tempDay, tempSense, precipitation, speed, direction, gusts, pressure, scene);
-        //printf("%s %s %s %s %s %s %s %s %s %s\n", date, tempNight, tempDay, tempSense, precipitation, speed, direction, gusts, pressure, scene);
-
-
-        // Parsing every column data to struct
-        sscanf(date, "%d.%d.%d", &curDay.date.day, &curDay.date.month, &curDay.date.year);
-        //printf("%d.%d.%d\n", curDay.date.day, curDay.date.month, curDay.date.year);
-
-        int countTempNight = sscanf(tempNight, "%d..%d", &curDay.tempNight.low, &curDay.tempNight.high);
-        if (countTempNight == 1)    // If there is only one number in column, then maximum = minimum
-            curDay.tempNight.high = curDay.tempNight.low;
-        //printf("%d  %d\n", curDay.tempNight.low, curDay.tempNight.high);
-
-        int countTempDay = sscanf(tempDay, "%d..%d", &curDay.tempDay.low, &curDay.tempDay.high);
-        if (countTempDay == 1)
-            curDay.tempDay.high = curDay.tempDay.low;
-        //printf("%d  %d\n", curDay.tempDay.low, curDay.tempDay.high);
-
-        int countTempSense = sscanf(tempSense, "%d..%d", &curDay.tempSense.low, &curDay.tempSense.high);
-        if (countTempSense == 1)
-            curDay.tempSense.high = curDay.tempSense.low;
-        //printf("%d  %d\n", curDay.tempSense.low, curDay.tempSense.high);
-
-        sscanf(precipitation, "%s", curDay.precipitation);
-        //printf("%s\n", precipitation);
-
-        int countSpeed = sscanf(speed, "%d-%d", &curDay.speed.low, &curDay.speed.high);
-        if (countSpeed == 1)
-            curDay.speed.high = curDay.speed.low;
-        //printf("%d  %d\n", curDay.speed.low, curDay.speed.high);
-
-        sscanf(direction, "%s", curDay.direction);
-        //printf("%s\n", curDay.direction);
-
-        int countGusts = sscanf(gusts, "%d-%d", &curDay.gusts.low, &curDay.gusts.high);
-        if (countGusts == 1)
-            curDay.gusts.high = curDay.gusts.low;
-        //printf("%d  %d\n", curDay.gusts.low, curDay.gusts.high);
-
-        sscanf(pressure, "%d", &curDay.pressure);
-        //printf("%d\n", curDay.pressure);
-
-        int countScenes = sscanf(scene, "%s%s%s%s%s%s", curDay.scene[0], curDay.scene[1],
-                                 curDay.scene[2], curDay.scene[3],
-                                 curDay.scene[4], curDay.scene[5]);
-        curDay.sceneCount = countScenes;
-        //for (int i = 0; i < curDay.sceneCount; ++i) {
-        //    printf("%s\n", curDay.scene[i]);
-        //}
-
-        // End of parsing and increasing of countDays by one
-        ++countDays;
+    //THE MAIN PROGRAM CYCLE
+    //ALL THE MAGIC HAPPENS HERE
+    while (!feof(data) && fgets(currentString, STRING_SIZE, data)) {
+        dataParse(currentString);
     }
 
-    // pattern for previous day output and current day output
-    /*printf("Prev Day:\n");
-    printf("%d %d %d | %d %d | %d %d | %d %d | %s | %d %d | %s | %d %d | %d | ", prevDay.date.day, prevDay.date.month,
-           prevDay.date.year, prevDay.tempNight.low, prevDay.tempNight.high, prevDay.tempDay.low, prevDay.tempDay.high,
-           prevDay.tempSense.low, prevDay.tempSense.high, prevDay.precipitation, prevDay.speed.low, prevDay.speed.high,
-           prevDay.direction, prevDay.gusts.low, prevDay.gusts.high, prevDay.pressure);
-    for (int i = 0; i < prevDay.sceneCount; ++i) {
-        printf("%s ", prevDay.scene[i]);
-    }
-    printf("\nCur Day:\n");
-
-    printf("%d %d %d | %d %d | %d %d | %d %d | %s | %d %d | %s | %d %d | %d | ", curDay.date.day, curDay.date.month,
-           curDay.date.year, curDay.tempNight.low, curDay.tempNight.high, curDay.tempDay.low, curDay.tempDay.high,
-           curDay.tempSense.low, curDay.tempSense.high, curDay.precipitation, curDay.speed.low, curDay.speed.high,
-           curDay.direction, curDay.gusts.low, curDay.gusts.high, curDay.pressure);
-
-    for (int i = 0; i < curDay.sceneCount; ++i) {
-        printf("%s ", curDay.scene[i]);
-    }*/
-
+    //closing forecast data file
     fclose(data);
+
+
+
+    //DEBUG for constantParse
+    //printf("%s", Temperature.group[5].tmp[4]);
+
+    // DEBUG for dataParse
+    /*printf("%d %d %d | %d %d | %d %d | %d %d | %s | %d %d | ", prevDate.day, prevDate.month, prevDate.year, prevDayNums[0],
+           prevDayNums[1], prevDayNums[2], prevDayNums[3], prevDayNums[4], prevDayNums[5], prevDayStr[0][0], prevDayNums[6], prevDayNums[7]);
+    for (int i = 0; i < prevCountDirections; ++i) {
+        printf("%s ", prevDayStr[1][i]);
+    }
+    printf("| ");
+    printf("%d %d | %d | ", prevDayNums[8], prevDayNums[9], prevDayNums[10]);
+    for (int i = 0; i < prevCountScenes; ++i) {
+        printf("%s ", prevDayStr[2][i]);
+    }
+    printf("\n\n");*/
+
+    /*printf("%d %d %d | %d %d | %d %d | %d %d | %s | %d %d | ", curDate.day, curDate.month, curDate.year, curDayNums[0],
+           curDayNums[1], curDayNums[2], curDayNums[3], curDayNums[4], curDayNums[5], curDayStr[0][0], curDayNums[6], curDayNums[7]);
+    for (int i = 0; i < curCountDirections; ++i) {
+        printf("%s ", curDayStr[1][i]);
+    }
+    printf("| ");
+    printf("%d %d | %d | ", curDayNums[8], curDayNums[9], curDayNums[10]);
+    for (int i = 0; i < curCountScenes; ++i) {
+        printf("%s ", curDayStr[2][i]);
+    }
+    printf("\n\n");*/
+
+    return 0;
 }
+
+

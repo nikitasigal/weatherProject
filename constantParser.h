@@ -1,10 +1,11 @@
 #ifndef WEATHERPROJECT_CONSTANTPARSER_H
 #define WEATHERPROJECT_CONSTANTPARSER_H
 
+#include "sharedConstants.h"
+
 //template categories
 #define CATEGORY_SIZE 10
 #define TEMPGROUP_SIZE 5
-#define STRING_SIZE 300
 typedef struct TemplateGroup {
     int size;
     char tmp[TEMPGROUP_SIZE][STRING_SIZE];
@@ -23,7 +24,6 @@ CATEGORY
 //synonym dictionaries
 #define DICTIONARY_SIZE 10
 #define SYNGROUP_SIZE 10
-#define WORD_SIZE 100
 #define END_SIZE 10
 typedef struct ComplexWord {
     char base[WORD_SIZE], end[END_SIZE];

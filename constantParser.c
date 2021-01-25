@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 
-void categoryParse(CATEGORY *ctg, char filename[STRING_SIZE]) {
+void categoryParse(CATEGORY *ctg, const char filename[STRING_SIZE]) {
     FILE *f = fopen(filename, "r");
     int groupID = 0;
     int tmpID = 0;
@@ -22,7 +22,7 @@ void categoryParse(CATEGORY *ctg, char filename[STRING_SIZE]) {
     fclose(f);
 }
 
-void dictionaryParse(DICTIONARY *dic, char filename[STRING_SIZE]) {
+void dictionaryParse(DICTIONARY *dic, const char filename[STRING_SIZE]) {
     FILE *f = fopen(filename, "r");
     int groupID = 0;
     int synID = 0;
@@ -51,7 +51,7 @@ void constantParse() {
     double windTemp[] = {0, 1.6, 5.5, 10.8, 17.2, 28.5};
     WindScale = windTemp;
 
-    FILE *f; //universal file
+    FILE *f; //universal file variable
 
     //average temperature and pressure by month of the year
     f = fopen("Constants/averages.txt", "r");
@@ -69,11 +69,11 @@ void constantParse() {
     }
     fclose(f);
 
-    //dictionaries
+    //dictionaries parse
     dictionaryParse(&Adjectives, "Dictionaries/adjectives.txt");
     dictionaryParse(&Adverbs, "Dictionaries/adverbs.txt");
     dictionaryParse(&Nouns, "Dictionaries/nouns.txt");
 
-    //categories
+    //categories parse
     categoryParse(&Temperature, "Templates/temperature.txt");
 }
