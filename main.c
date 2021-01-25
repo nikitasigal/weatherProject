@@ -3,7 +3,10 @@
 #include <windows.h>
 
 // Size of most arrays
-#define SIZE 300
+#define STRING_SIZE 300
+#define NUMS_SIZE 11
+#define WORD_SIZE 6
+#define CATEGORIES_SIZE 3
 
 // Local structure for storing a date
 typedef struct {
@@ -22,20 +25,21 @@ int main() {
         return 0;
     }
 
-    char tempString[SIZE];
-    fgets(tempString, SIZE, data); // Shift a carriage to the next line
+    char tempString[STRING_SIZE];
+    fgets(tempString, STRING_SIZE, data); // Shift a carriage to the next line
 
     // Временные переменные для парсинга через sscanf
-    char dateTemp[SIZE], tempNight[SIZE], tempDay[SIZE], tempSense[SIZE], precipitation[SIZE], speed[SIZE], direction[SIZE], gusts[SIZE], pressure[SIZE], scene[SIZE];
+    char dateTemp[STRING_SIZE], tempNight[STRING_SIZE], tempDay[STRING_SIZE], tempSense[STRING_SIZE], precipitation[STRING_SIZE],
+    speed[STRING_SIZE], direction[STRING_SIZE], gusts[STRING_SIZE], pressure[STRING_SIZE], scene[STRING_SIZE];
 
-    int curDayNums[11];         // 11 чисел из файла
-    char curDayStr[3][6][SIZE]; /* Первый индекс - категория (осадки, направление, явления), второй - конкретное явление
+    int curDayNums[NUMS_SIZE];         // 11 чисел из файла
+    char curDayStr[CATEGORIES_SIZE][WORD_SIZE][STRING_SIZE]; /* Первый индекс - категория (осадки, направление, явления), второй - конкретное явление
                                    из файла. Предполагаю, что не может быть больше 6 явлений за один раз */
     Date curDate;               // curDate.day / curDate.month / curDate.year
 
     // Предыдущий день:
     int prevDayNums[11];
-    char prevDayStr[3][6][SIZE];
+    char prevDayStr[3][6][STRING_SIZE];
     Date prevDate;
 
     int curCountDirections = 0; // Количество направлений ветра в день. Нужно для переопределения предыдущего дня
@@ -44,9 +48,9 @@ int main() {
     int prevCountScenes = 0;
 
     int countDays = 0;  // Количество дней
-    char currentString[SIZE] = { 0 }; // Строка для чтения
+    char currentString[STRING_SIZE] = { 0 }; // Строка для чтения
 
-    while (!feof(data) && fgets(currentString, SIZE, data)) {
+    while (!feof(data) && fgets(currentString, STRING_SIZE, data)) {
         // Copy curDay struct to prevDay (excepting the first day)
         if (countDays != 0) {
             prevDate.year = curDate.year;
