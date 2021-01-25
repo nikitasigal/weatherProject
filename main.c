@@ -1,5 +1,5 @@
 /*
- *  Основные массивы для данных (из dataParser.h):
+ *  Основные массивы для данных (из dataParse.h):
  *     - curDate - структура даты текущего дня, имеет параметры day, month, year (curDate.day etc.)
  *     - prevDate - структура даты предыдущего дня (отсутствует для первого дня)
  *
@@ -35,30 +35,45 @@
  */
 
 #include <stdio.h>
+#include <string.h>
 #include <windows.h>
+
+#include "sharedConstants.h"
+#include "constantParser.h"
 #include "dataParser.h"
 
 int main() {
     SetConsoleCP(CP_UTF8);
     SetConsoleOutputCP(CP_UTF8);
 
-    printf("Привет, мир!\n");
+    //global files parse
+    constantParse();
 
-    FILE *data = fopen("Data Source/data.txt", "r");
+    //opening forecast data file
+    FILE *data = fopen("Forecast Data/data.txt", "r");
     if (data == NULL) {
         printf("Error: file was not opened.");
         return 0;
     }
 
-    char currentString[STRING_SIZE] = { 0 }; // Строка для чтения
-    fgets(currentString, STRING_SIZE, data); // Shift a carriage to the next line
+    char currentString[STRING_SIZE] = {0}; // I think everyone knows what is this for
+    fgets(currentString, STRING_SIZE, data); // skipping the first lines with table headings
 
+    //THE MAIN PROGRAM CYCLE
+    //ALL THE MAGIC HAPPENS HERE
     while (!feof(data) && fgets(currentString, STRING_SIZE, data)) {
-        dataParser(currentString);
+        dataParse(currentString);
     }
 
+    //closing forecast data file
+    fclose(data);
 
-    // DEBUG INFORMATION (DON'T REMOVE PLEASE)
+
+
+    //DEBUG for constantParse
+    //printf("%s", Temperature.group[5].tmp[4]);
+
+    // DEBUG for dataParse
     /*printf("%d %d %d | %d %d | %d %d | %d %d | %s | %d %d | ", prevDate.day, prevDate.month, prevDate.year, prevDayNums[0],
            prevDayNums[1], prevDayNums[2], prevDayNums[3], prevDayNums[4], prevDayNums[5], prevDayStr[0][0], prevDayNums[6], prevDayNums[7]);
     for (int i = 0; i < prevCountDirections; ++i) {
@@ -83,8 +98,7 @@ int main() {
     }
     printf("\n\n");*/
 
-
-    fclose(data);
+    return 0;
 }
 
 
