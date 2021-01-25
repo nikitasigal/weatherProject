@@ -39,7 +39,7 @@ int main() {
 
     constantParse();
 
-    printf("Привет, мир!\n");
+    printf("%s", Nouns[0].synonyms[0].base);
 
     FILE *data = fopen("Forecast Data/data.txt", "r");
     if (data == NULL) {

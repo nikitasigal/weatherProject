@@ -3,4 +3,4 @@ project(weatherProject C)
 
 set(CMAKE_C_STANDARD 11)
 
-add_executable(weatherProject main.c constantParser.cpp constantParser.h)
+add_executable(weatherProject main.c constantParser.c constantParser.h)
