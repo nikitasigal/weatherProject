@@ -39,7 +39,7 @@ int main() {
 
     constantParse();
 
-    printf("%s", Nouns[0].synonyms[0].base);
+    printf("%s", Temperature.group[5].tmp[4]);
 
     FILE *data = fopen("Forecast Data/data.txt", "r");
     if (data == NULL) {

@@ -1,9 +1,28 @@
 #ifndef WEATHERPROJECT_CONSTANTPARSER_H
 #define WEATHERPROJECT_CONSTANTPARSER_H
 
-//synonym groups
-#define GROUP_COUNT 10
-#define GROUP_SIZE 10
+//template categories
+#define CATEGORY_SIZE 10
+#define TEMPGROUP_SIZE 5
+#define STRING_SIZE 300
+typedef struct TemplateGroup {
+    int size;
+    char tmp[TEMPGROUP_SIZE][STRING_SIZE];
+} TEMP_GROUP;
+typedef struct Category {
+    int size;
+    TEMP_GROUP group[CATEGORY_SIZE];
+} CATEGORY;
+CATEGORY
+        Temperature,
+        Precipitation,
+        Wind,
+        Pressure,
+        Phenomenon;
+
+//synonym dictionaries
+#define DICTIONARY_SIZE 10
+#define SYNGROUP_SIZE 10
 #define WORD_SIZE 100
 #define END_SIZE 10
 typedef struct ComplexWord {
@@ -11,16 +30,16 @@ typedef struct ComplexWord {
 } COMP_WORD;
 typedef struct SynonymGroup {
     int size;
-    COMP_WORD synonyms[GROUP_SIZE];
+    COMP_WORD syn[SYNGROUP_SIZE];
 } SYN_GROUP;
-SYN_GROUP
-        Adjectives[GROUP_COUNT],
-        Adverbs[GROUP_COUNT],
-        Nouns[GROUP_COUNT];
-int
-        AdjectivesCnt,
-        AdverbsCnt,
-        NounsCnt;
+typedef struct Dictionary {
+    int size;
+    SYN_GROUP group[DICTIONARY_SIZE];
+} DICTIONARY;
+DICTIONARY
+        Adjectives,
+        Adverbs,
+        Nouns;
 
 //endings table
 #define END_ROWS 20
@@ -29,7 +48,7 @@ char Endings[END_ROWS][END_COLUMNS][END_SIZE];
 
 
 //simple values
-int AvTemp[12], AvPressure[12];
+int AverageTemperature[12], AveragePressure[12];
 double *WindScale;
 
 

@@ -2,6 +2,50 @@
 #include <stdio.h>
 #include <string.h>
 
+void categoryParse(CATEGORY *ctg, char filename[STRING_SIZE]) {
+    FILE *f = fopen(filename, "r");
+    int groupID = 0;
+    int tmpID = 0;
+    char temp[STRING_SIZE];
+    while (!feof(f)) {
+        fgets(temp, STRING_SIZE, f);
+        if (temp[0] == '!') {
+            groupID++;
+            (*ctg).size++;
+            tmpID = 0;
+        } else {
+            strcpy((*ctg).group[groupID].tmp[tmpID], temp);
+            tmpID++;
+            (*ctg).group[groupID].size++;
+        }
+    }
+    fclose(f);
+}
+
+void dictionaryParse(DICTIONARY *dic, char filename[STRING_SIZE]) {
+    FILE *f = fopen(filename, "r");
+    int groupID = 0;
+    int synID = 0;
+    char temp[STRING_SIZE];
+    while (!feof(f)) {
+        fgets(temp, STRING_SIZE, f);
+        temp[strlen(temp) - 1] = 0;
+        if (temp[0] == '!') {
+            groupID++;
+            (*dic).size++;
+            synID = 0;
+        } else {
+            char s1[WORD_SIZE] = {0}, s2[WORD_SIZE] = {0};
+            sscanf(temp, "%s%s", s1, s2);
+            strcpy((*dic).group[groupID].syn[synID].base, s1);
+            strcpy((*dic).group[groupID].syn[synID].end, s2);
+            synID++;
+            (*dic).group[groupID].size++;
+        }
+    }
+    fclose(f);
+}
+
 void constantParse() {
     //wind force scale
     double windTemp[] = {0, 1.6, 5.5, 10.8, 17.2, 28.5};
@@ -10,14 +54,14 @@ void constantParse() {
     FILE *f; //universal file
 
     //average temperature and pressure by month of the year
-    f = fopen("Dictionaries/averages.txt", "r");
+    f = fopen("Constants/averages.txt", "r");
     for (int i = 0; i < 12; ++i) {
-        fscanf(f, "%d%d", &(AvTemp[i]), &(AvPressure[i]));
+        fscanf(f, "%d%d", &(AverageTemperature[i]), &(AveragePressure[i]));
     }
     fclose(f);
 
     //endings table
-    f = fopen("Dictionaries/endings.txt", "r");
+    f = fopen("Constants/endings.txt", "r");
     for (int i = 0; i < END_ROWS; ++i) {
         for (int j = 0; j < END_COLUMNS; ++j) {
             fscanf(f, "%s", Endings[i][j]);
@@ -25,66 +69,11 @@ void constantParse() {
     }
     fclose(f);
 
-    //dictionary variables
-    int id; //group number
-    int grid; //word number in the group
-    char temp[WORD_SIZE]; //temporary string
+    //dictionaries
+    dictionaryParse(&Adjectives, "Dictionaries/adjectives.txt");
+    dictionaryParse(&Adverbs, "Dictionaries/adverbs.txt");
+    dictionaryParse(&Nouns, "Dictionaries/nouns.txt");
 
-    //adjectives groups
-    f = fopen("Dictionaries/adjectives.txt", "r");
-    id = 0;
-    grid = 0;
-    while (!feof(f)) {
-        fscanf(f, "%s", temp);
-        if (temp[0] == '!') {
-            id++;
-            AdjectivesCnt++;
-            grid = 0;
-        } else {
-            strcpy(Adjectives[id].synonyms[grid].base, temp);
-            fscanf(f, "%s", temp);
-            strcpy(Adjectives[id].synonyms[grid].end, temp);
-            grid++;
-            Adjectives[id].size++;
-        }
-    }
-    fclose(f);
-
-    //adverbs groups
-    f = fopen("Dictionaries/adverbs.txt", "r");
-    id = 0;
-    grid = 0;
-    while (!feof(f)) {
-        fgets(temp, WORD_SIZE, f);
-        temp[strlen(temp) - 1] = 0;
-        if (temp[0] == '!') {
-            id++;
-            AdverbsCnt++;
-            grid = 0;
-        } else {
-            strcpy(Adverbs[id].synonyms[grid].base, temp);
-            grid++;
-            Adverbs[id].size++;
-        }
-    }
-    fclose(f);
-
-    //nouns groups
-    f = fopen("Dictionaries/nouns.txt", "r");
-    id = 0;
-    grid = 0;
-    while (!feof(f)) {
-        fgets(temp, WORD_SIZE, f);
-        temp[strlen(temp) - 1] = 0;
-        if (temp[0] == '!') {
-            id++;
-            NounsCnt++;
-            grid = 0;
-        } else {
-            strcpy(Nouns[id].synonyms[grid].base, temp);
-            grid++;
-            Nouns[id].size++;
-        }
-    }
-    fclose(f);
+    //categories
+    categoryParse(&Temperature, "Templates/temperature.txt");
 }
