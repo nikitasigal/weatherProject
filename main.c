@@ -8,6 +8,7 @@
 #define WORD_SIZE 6
 #define CATEGORIES_SIZE 3
 
+
 // Local structure for storing a date
 typedef struct {
     int day, month, year;
