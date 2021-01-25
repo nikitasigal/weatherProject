@@ -3,7 +3,7 @@
 #include <windows.h>
 
 // Size of most arrays
-#define SIZE 200
+#define SIZE 300
 
 // Local structure for storing a date
 typedef struct {
@@ -44,8 +44,7 @@ int main() {
     int prevCountScenes = 0;
 
     int countDays = 0;  // Количество дней
-
-    char currentString[SIZE] = { 0 };
+    char currentString[SIZE] = { 0 }; // Строка для чтения
 
     while (!feof(data) && fgets(currentString, SIZE, data)) {
         // Copy curDay struct to prevDay (excepting the first day)
@@ -134,7 +133,7 @@ int main() {
 
 
         sscanf(pressure, "%d", &curDayNums[10]);
-        printf("%d\n", curDayNums[10]);
+        //printf("%d\n", curDayNums[10]);
 
         curCountScenes = sscanf(scene, "%[^,\\n],%[^,\\n],%[^,\\n],%[^,\\n],%[^,\\n],%[^,\\n]", curDayStr[2][0], curDayStr[2][1],
                                  curDayStr[2][2], curDayStr[2][3],
@@ -147,6 +146,32 @@ int main() {
         // End of parsing and increasing of countDays by one
         ++countDays;
     }
+
+    // DEBUG INFORMATION
+    /*printf("%d %d %d | %d %d | %d %d | %d %d | %s | %d %d | ", prevDate.day, prevDate.month, prevDate.year, prevDayNums[0],
+           prevDayNums[1], prevDayNums[2], prevDayNums[3], prevDayNums[4], prevDayNums[5], prevDayStr[0][0], prevDayNums[6], prevDayNums[7]);
+    for (int i = 0; i < prevCountDirections; ++i) {
+        printf("%s ", prevDayStr[1][i]);
+    }
+    printf("| ");
+    printf("%d %d | %d | ", prevDayNums[8], prevDayNums[9], prevDayNums[10]);
+    for (int i = 0; i < prevCountScenes; ++i) {
+        printf("%s ", prevDayStr[2][i]);
+    }
+    printf("\n\n");*/
+
+    /*printf("%d %d %d | %d %d | %d %d | %d %d | %s | %d %d | ", curDate.day, curDate.month, curDate.year, curDayNums[0],
+           curDayNums[1], curDayNums[2], curDayNums[3], curDayNums[4], curDayNums[5], curDayStr[0][0], curDayNums[6], curDayNums[7]);
+    for (int i = 0; i < curCountDirections; ++i) {
+        printf("%s ", curDayStr[1][i]);
+    }
+    printf("| ");
+    printf("%d %d | %d | ", curDayNums[8], curDayNums[9], curDayNums[10]);
+    for (int i = 0; i < curCountScenes; ++i) {
+        printf("%s ", curDayStr[2][i]);
+    }
+    printf("\n\n");*/
+
 
     fclose(data);
 }
