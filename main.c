@@ -2,6 +2,8 @@
 #include <string.h>
 #include <windows.h>
 
+#include "constantParser.h"
+
 // Size of most arrays
 #define SIZE 300
 
@@ -35,9 +37,11 @@ int main() {
     SetConsoleCP(CP_UTF8);
     SetConsoleOutputCP(CP_UTF8);
 
+    constantParse();
+
     printf("Привет, мир!\n");
 
-    FILE *data = fopen("Data Source/data.txt", "r");
+    FILE *data = fopen("Forecast Data/data.txt", "r");
     if (data == NULL) {
         printf("Error: file was not opened.");
         return 0;
