@@ -82,26 +82,26 @@ void percent(const char* request, int trigger) {
     int genus = request[2] - 'A';
     int wordCase = request[3] - 'A';
 
-    DICTIONARY temp;
+    DICTIONARY word;
     switch(partOfSpeech) {
         case 0:
-            temp = Adjectives;
+            word = Adjectives;
             break;
         case 1:
-            temp = Adverbs;
+            word = Adverbs;
             break;
         default:
             break;
     }
 
     // Choosing of random word
-    int random = rand() % temp.group[group].size;
+    int random = rand() % word.group[group].size;
     char base[STRING_SIZE];
-    strcpy(base, temp.group[group].syn[random].base);
+    strcpy(base, word.group[group].syn[random].base);
 
     int category = 0;
     char last = base[strlen(base) - 1];
-    char first = temp.group[group].syn[random].end[1];
+    char first = word.group[group].syn[random].end[1];
     switch (last) {
         case -77: case -70: case -123:
             category = 4;
@@ -124,81 +124,87 @@ void percent(const char* request, int trigger) {
         base[1] = (char)(base[1] - 32);
     printf("%s", base);
     if (genus == 0 && wordCase == 0)
-        printf("%s", temp.group[group].syn[random].end);
+        printf("%s", word.group[group].syn[random].end);
     else
         printf("%s", Endings[category * 4 + genus][wordCase]);
 
 }
 
 void generator(char* cat, int level) {
-    //srand(time(NULL));
-    int randomTemplate = rand() % Temperature.group[level].size;
-    int lastNum = 0;
+    int randomTemplate = rand() % Temperature.group[level].size;    // Random selection of template
+    int lastNum = 0;    // Last digit of previous number. Required to '*'
     CATEGORY parameter;
     if (strcmp(cat, "Температура") == 0)
         parameter = Temperature;
     char *curTemplate = parameter.group[0].tmp[randomTemplate];
     //char *curTemplate = "Никаких аномальных %ABDB или %ADDB температур - напротив, %AEBA около $AD градус*B.";
     for (int i = 0; i < strlen(curTemplate); ++i) {
-        if (curTemplate[i] == '$') {
-            ++i;
-            switch (curTemplate[i]) {
-                case 'A':
+        switch (curTemplate[i]) {
+            case '$':
+                if (curTemplate[i] == '$') {
                     ++i;
-                    lastNum  = curDayNums[curTemplate[i] - 'A'];
-                    printf("%d", lastNum);
-                    lastNum %= 10;
-                    lastNum = abs(lastNum);
-                    break;
-                case 'B':
-                    // TODO
-                    break;
-                default:
-                    printf("Error");
-            }
-            continue;
-        }
-        if (curTemplate[i] == '%') {
-            // Триггер для капитализации буквы в начале предложения
-            int trigger = 0;
-            if (i == 0 || curTemplate[i - 2] == '.')
-                trigger = 1;
+                    switch (curTemplate[i]) {
+                        case 'A':
+                            ++i;
+                            lastNum  = curDayNums[curTemplate[i] - 'A'];
+                            printf("%d", lastNum);
+                            lastNum %= 10;
+                            lastNum = abs(lastNum);
+                            break;
+                        case 'B':
+                            // TODO
+                            break;
+                        default:
+                            printf("Error");
+                    }
+                }
+                break;
+            case '%':
+                if (curTemplate[i] == '%') {
+                    // Триггер для капитализации буквы в начале предложения
+                    int trigger = 0;
+                    if (i == 0 || curTemplate[i - 2] == '.')
+                        trigger = 1;
 
-            ++i;
-            char request[4];
-            for (int j = 0; j < 4; ++j) {
-                request[j] = curTemplate[i + j];
-            }
+                    ++i;
+                    char request[4];
+                    for (int j = 0; j < 4; ++j) {
+                        request[j] = curTemplate[i + j];
+                    }
 
-            i += 3;
-            // Предобработка %.... $..
-            if (curTemplate[i + 2] == '$' && curTemplate[i + 3] == 'A' && abs(curDayNums[curTemplate[i + 4] - 'A']) != 1) {
-                request[2] = 'D';
-            }
+                    i += 3;
+                    // Предобработка %.... $..
+                    if (curTemplate[i + 2] == '$' && curTemplate[i + 3] == 'A' && abs(curDayNums[curTemplate[i + 4] - 'A']) != 1) {
+                        request[2] = 'D';
+                    }
 
-            percent(request, trigger);
-            continue;
+                    percent(request, trigger);
+                }
+                break;
+            case '*':
+                if (curTemplate[i] == '*') {
+                    int category = 0;
+                    ++i;
+                    switch (lastNum) {
+                        case 1:
+                            break;
+                        case 2:
+                        case 3:
+                        case 4:
+                            category = 1;
+                            break;
+                        default:
+                            category = 2;
+                            break;
+                    }
+                    int caseWord = curTemplate[i] - 'A';
+                    if (!(category == 0 && (caseWord == 0 || caseWord == 3)))
+                        printf("%s", EndingsMeasures[category][curTemplate[i] - 'A']);
+                }
+                break;
+            default:
+                printf("%c", curTemplate[i]);
+                break;
         }
-        if (curTemplate[i] == '*') {
-            int category = 0;
-            ++i;
-            switch (lastNum) {
-                case 1:
-                    break;
-                case 2:
-                case 3:
-                case 4:
-                    category = 1;
-                    break;
-                default:
-                    category = 2;
-                    break;
-            }
-            int caseWord = curTemplate[i] - 'A';
-            if (!(category == 0 && (caseWord == 0 || caseWord == 3)))
-                printf("%s", EndingsMeasures[category][curTemplate[i] - 'A']);
-            ++i;
-        }
-        printf("%c", curTemplate[i]);
     }
 }
