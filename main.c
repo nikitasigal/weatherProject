@@ -4,17 +4,17 @@
  *     - prevDate - структура даты предыдущего дня (отсутствует для первого дня)
  *
  *     - curDayNums[11] - массив с числовыми данными текущего дня:
- *          • 0 - нижний порог ночной температуры
- *          • 1 - верхний порог ночной температуры
- *          • 2 - нижний порог дневной температуры
- *          • 3 - верхний порог дневной температуры
- *          • 4 - нижний порог ощущения температуры
- *          • 5 - верхний порог ощущения температуры
- *          • 6 - нижний порог скорости ветра
- *          • 7 - верхний порог скорости ветра
- *          • 8 - нижний порог порывов ветра
- *          • 9 - верхний поров порывов ветра
- *          • 10 - давление
+ *          • 0 - нижний порог ночной температуры - A
+ *          • 1 - верхний порог ночной температуры - B
+ *          • 2 - нижний порог дневной температуры - C
+ *          • 3 - верхний порог дневной температуры - D
+ *          • 4 - нижний порог ощущения температуры - E
+ *          • 5 - верхний порог ощущения температуры - F
+ *          • 6 - нижний порог скорости ветра - G
+ *          • 7 - верхний порог скорости ветра - H
+ *          • 8 - нижний порог порывов ветра - I
+ *          • 9 - верхний поров порывов ветра - J
+ *          • 10 - давление - K
  *          Если в данных только одно число, то нижний порог = верхнему порогу = числу
  *
  *     - curDayStr[3][6][300] - массив с строковыми данными текущего дня. Первый индекс - категория, второй - слово (не больше 6),
@@ -24,7 +24,7 @@
  *          • 2 - явления
  *
  *     - prevDayNums[11] - массив с числовыми данными ПРЕДЫДУЩЕГО дня
- *     - prevDayStr[11] - массив с числовыми данными ПРЕДЫДУЩЕГО дня
+ *     - prevDayStr[11] - массив со строковыми данными ПРЕДЫДУЩЕГО дня
  *
  *      Возможно, бесполезные переменные:
  *          int curCountDirections; // Количество направлений ветра в день. Нужно для переопределения предыдущего дня
@@ -35,16 +35,22 @@
  */
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
+#include <time.h>
 #include <windows.h>
 
 #include "sharedConstants.h"
 #include "constantParser.h"
 #include "dataParser.h"
+#include "sentenceHandler.h"
 
 int main() {
     SetConsoleCP(CP_UTF8);
     SetConsoleOutputCP(CP_UTF8);
+
+    //random generator
+    srand(time(NULL));
 
     //global files parse
     constantParse();
@@ -56,13 +62,15 @@ int main() {
         return 0;
     }
 
-    char currentString[STRING_SIZE] = {0}; // I think everyone knows what is this for
+    char currentString[STRING_SIZE] = { 0 }; // I think everyone knows what is this for
     fgets(currentString, STRING_SIZE, data); // skipping the first lines with table headings
 
     //THE MAIN PROGRAM CYCLE
     //ALL THE MAGIC HAPPENS HERE
     while (!feof(data) && fgets(currentString, STRING_SIZE, data)) {
         dataParse(currentString);
+        generator("Температура", 0);
+        //printf("%lf", calcRate("Рейтинг дня"));
     }
 
     //closing forecast data file
@@ -100,5 +108,4 @@ int main() {
 
     return 0;
 }
-
 

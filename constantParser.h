@@ -5,7 +5,7 @@
 
 //template categories
 #define CATEGORY_SIZE 10
-#define TEMPGROUP_SIZE 5
+#define TEMPGROUP_SIZE 10
 typedef struct TemplateGroup {
     int size;
     char tmp[TEMPGROUP_SIZE][STRING_SIZE];
@@ -25,6 +25,10 @@ CATEGORY
 #define DICTIONARY_SIZE 10
 #define SYNGROUP_SIZE 10
 #define END_SIZE 10
+
+#define END_MEASURE_ROWS 3
+#define END_MEASURE_COLUMNS 6
+
 typedef struct ComplexWord {
     char base[WORD_SIZE], end[END_SIZE];
 } COMP_WORD;
@@ -45,6 +49,7 @@ DICTIONARY
 #define END_ROWS 20
 #define END_COLUMNS 6
 char Endings[END_ROWS][END_COLUMNS][END_SIZE];
+char EndingsMeasures[END_MEASURE_ROWS][END_MEASURE_COLUMNS][END_SIZE];
 
 
 //simple values

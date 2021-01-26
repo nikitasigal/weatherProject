@@ -9,6 +9,7 @@ void categoryParse(CATEGORY *ctg, const char filename[STRING_SIZE]) {
     char temp[STRING_SIZE];
     while (!feof(f)) {
         fgets(temp, STRING_SIZE, f);
+        char *str = temp;
         if (temp[0] == '!') {
             groupID++;
             (*ctg).size++;
@@ -51,7 +52,7 @@ void constantParse() {
     double windTemp[] = {0, 1.6, 5.5, 10.8, 17.2, 28.5};
     WindScale = windTemp;
 
-    FILE *f; //universal file variable
+    FILE *f;  //universal file variable
 
     //average temperature and pressure by month of the year
     f = fopen("Constants/averages.txt", "r");
@@ -65,6 +66,14 @@ void constantParse() {
     for (int i = 0; i < END_ROWS; ++i) {
         for (int j = 0; j < END_COLUMNS; ++j) {
             fscanf(f, "%s", Endings[i][j]);
+        }
+    }
+    fclose(f);
+
+    f = fopen("Constants/endings_measures.txt", "r");
+    for (int i = 0; i < END_MEASURE_ROWS; ++i) {
+        for (int j = 0; j < END_MEASURE_COLUMNS; ++j) {
+            fscanf(f, "%s", EndingsMeasures[i][j]);
         }
     }
     fclose(f);

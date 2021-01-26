@@ -78,7 +78,7 @@ void dataParse(const char *currentString) {
         curDayNums[7] = curDayNums[6];
     //printf("%d  %d\n", curDayNums[6], curDayNums[7]);
 
-    curCountDirections = sscanf(direction, "%[^,\\n],%[^,\\n],%[^,\\n],%[^,\\n]", curDayStr[1][0], curDayStr[1][1],
+    curCountDirections = sscanf(direction, "%[^,\n],%[^,\n],%[^,\n],%[^,\n]", curDayStr[1][0], curDayStr[1][1],
                                 curDayStr[1][2], curDayStr[1][3]);
     /*for (int i = 0; i < countDirections; ++i) {
         printf("%s ", curDayStr[1][i]);
@@ -94,7 +94,7 @@ void dataParse(const char *currentString) {
     sscanf(pressure, "%d", &curDayNums[10]);
     //printf("%d\n", curDayNums[10]);
 
-    curCountScenes = sscanf(scene, "%[^,\\n],%[^,\\n],%[^,\\n],%[^,\\n],%[^,\\n],%[^,\\n]", curDayStr[2][0], curDayStr[2][1],
+    curCountScenes = sscanf(scene, "%[^,\n],%[^,\n],%[^,\n],%[^,\n],%[^,\n],%[^,\n]", curDayStr[2][0], curDayStr[2][1],
                             curDayStr[2][2], curDayStr[2][3],
                             curDayStr[2][4], curDayStr[2][5]);
     /*for (int i = 0; i < countScenes; ++i) {

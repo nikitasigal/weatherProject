@@ -3,9 +3,6 @@
 
 #include "sharedConstants.h"
 
-#define NUMS_COUNT 11
-#define WORD_COUNT 100
-#define CATEGORIES_COUNT 3
 
 typedef struct {
     int day, month, year;
@@ -17,8 +14,8 @@ char curDayStr[CATEGORIES_COUNT][WORD_COUNT][STRING_SIZE]; /* Первый ин�
 Date curDate;                                            // curDate.day / curDate.month / curDate.year
 
 
-int prevDayNums[11];
-char prevDayStr[3][6][STRING_SIZE];
+int prevDayNums[NUMS_COUNT];
+char prevDayStr[CATEGORIES_COUNT][WORD_COUNT][STRING_SIZE];
 Date prevDate;
 
 
