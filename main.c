@@ -32,7 +32,6 @@
  *          int prevCountDirections;
  *          int prevCountScenes;
  *          int countDays;  // Количество дней
- *
  */
 
 #include <stdio.h>
