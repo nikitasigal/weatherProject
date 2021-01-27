@@ -5,7 +5,8 @@
 #include <string.h>
 #include <stdio.h>
 #include <math.h>
-
+// REMOVE!!!!
+int randomTemplate = -1;
 double calcRate(char* request) {
     double rate = 0;
 
@@ -131,12 +132,14 @@ void percent(const char* request, int trigger) {
 }
 
 void generator(char* cat, int level) {
-    int randomTemplate = rand() % Temperature.group[level].size;    // Random selection of template
+    //int randomTemplate = rand() % Temperature.group[level].size;    // Random selection of template
+    randomTemplate = (randomTemplate + 1) % Temperature.group[level].size;
+    printf("%d) ", randomTemplate + 1);
     int lastNum = 0;    // Last digit of previous number. Required to '*'
     CATEGORY parameter;
     if (strcmp(cat, "Температура") == 0)
         parameter = Temperature;
-    char *curTemplate = parameter.group[0].tmp[randomTemplate];
+    char *curTemplate = parameter.group[level].tmp[randomTemplate];
     //char *curTemplate = "Никаких аномальных %ABDB или %ADDB температур - напротив, %AEBA около $AD градус*B.";
     for (int i = 0; i < strlen(curTemplate); ++i) {
         switch (curTemplate[i]) {

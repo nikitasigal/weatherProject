@@ -69,7 +69,7 @@ int main() {
     //ALL THE MAGIC HAPPENS HERE
     while (!feof(data) && fgets(currentString, STRING_SIZE, data)) {
         dataParse(currentString);
-        generator("Температура", 0);
+        generator("Температура", 2);
         //printf("%lf", calcRate("Рейтинг дня"));
     }
 
