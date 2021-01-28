@@ -24,9 +24,9 @@ double calcRate(char* request) {
     double diffTemp = ((curDayNums[2] + curDayNums[3] + curDayNums[1] + curDayNums[0]) / 4.0) - AverageTemperature[curDate.month - 1];//Отклонение среднедневной температуры от нормы
     double tempRate;
     if (diffTemp > 0)   // Если отклонение от нормы в положительную сторону, то это не так плохо, нежели в отрицательную
-        tempRate = sqrt(fabs(diffTemp * diffTemp * diffTemp)) * 0.15;
+        tempRate = sqrt(fabs(diffTemp * diffTemp * diffTemp)) * 0.194;
     else
-        tempRate = -sqrt(fabs(diffTemp * diffTemp * diffTemp)) * 0.3;
+        tempRate = -sqrt(fabs(diffTemp * diffTemp * diffTemp)) * 0.31;
 
     if (strcmp(request, "Температура") == 0)    // Если запрос был по температуре, то возвращаем посчитанное значение
         return tempRate;
@@ -40,7 +40,7 @@ double calcRate(char* request) {
     if (strcmp(prec, "дождь") == 0)
         precipitationRate += 5.5;
     if (strcmp(prec, "град") == 0)
-        precipitationRate += 8.5;
+        precipitationRate += 9.5;
     if (strcmp(prec, "кислотныйдождь") == 0)
         precipitationRate += 300;
 
@@ -48,6 +48,7 @@ double calcRate(char* request) {
         return precipitationRate;
 
     // Подсчёт рейтинга по ветру
+    // WARNING!!! Don't use wind-rate for division into levels. Use WindScale
     double windRate = 0;
     double averageWind = (((curDayNums[6] + curDayNums[7]) / 2.0) + ((curDayNums[8] + curDayNums[9]) * 0.8 / 2.0)) / 2.5;
     windRate += sqrt((averageWind * averageWind * averageWind) / 10.0);
@@ -57,8 +58,8 @@ double calcRate(char* request) {
 
     // Подсчёт рейтинга по давлению
     double pressureRate = 0;
-    double diffPressure = abs(curDayNums[10] - 748);
-    pressureRate += (sqrt(diffPressure * diffPressure * diffPressure) / 4.3);
+    double diffPressure = curDayNums[10] - 748;
+    pressureRate += (sqrt(diffPressure * diffPressure * diffPressure) / 5.0);
 
     if (strcmp(request, "Давление") == 0)
         return pressureRate;
@@ -69,13 +70,13 @@ double calcRate(char* request) {
         char scene[STRING_SIZE];
         strcpy(scene, curDayStr[2][i]);
         if (strcmp(scene, "облачность") == 0)
-            scenesRate += 2.2;
+            scenesRate += 2.3;
         if (strcmp(scene, "туман") == 0)
-            scenesRate += 2.8;
+            scenesRate += 3.5;
         if (strcmp(scene, "гололедица") == 0)
-            scenesRate += 3.2;
+            scenesRate += 4.5;
         if (strcmp(scene, "метель") == 0)
-            scenesRate += 8.5;
+            scenesRate += 9.5;
         if (strcmp(scene, "гроза") == 0)
             scenesRate += 15;
         if (strcmp(scene, "конецсвета") == 0)
@@ -86,14 +87,14 @@ double calcRate(char* request) {
         return scenesRate;
 
     // Среднее арифметическое рейтингов. Рейтинг дня
-    rate += (fabs(tempRate) + precipitationRate + windRate + pressureRate + scenesRate) / 5;
+    rate += (fabs(tempRate) + precipitationRate + windRate + fabs(pressureRate) + scenesRate) / 5;
 
     if (strcmp(request, "Рейтинг дня") == 0)
         return rate;
 
     // DEBUG INFORMATION
-    //printf("temp: %.2lf | prec: %.2lf | wind: %.2lf | pressure: %.2lf | scenes: %.2lf | rate: %.2lf\n", tempRate, precipitationRate,
-    //       windRate, pressureRate, scenesRate, rate);
+    printf("temp: %.2lf | prec: %.2lf | wind: %.2lf | pressure: %.2lf | scenes: %.2lf | rate: %.2lf\n", tempRate, precipitationRate,
+           windRate, pressureRate, scenesRate, rate);
 
     return -9999;
 }
@@ -153,8 +154,14 @@ void percent(const char* request, int trigger) {    // Функция для %AB
     if ((genus == 0) && (wordCase == 3))                        // Дальше творится правало русского языка. Это к Юле
         wordCase = 0;
     //Обработка начала предложения (капитализация буквы)
-    if (trigger)
-        base[1] = (char)(base[1] - 32);
+    if (trigger) {
+        if (base[0] == -48) {
+            base[1] = (char) (base[1] - 32);
+        } else {
+            base[0] -= 1;
+            base[1] = (char) (base[1] + 32);
+        }
+    }
     printf("%s", base);
     if (genus == 0 && wordCase == 0)
         printf("%s", dictionary.group[group].syn[randomWord].end);
@@ -179,8 +186,8 @@ void generator(char* ctg, int level) {
     CATEGORY parameter; // Выбор массива по выбранному параметру (температура, ветер, давление и т.п.)
     if (strcmp(ctg, "Температура") == 0)
         parameter = Temperature;
-    char *curTemplate = parameter.group[level].tmp[randomTemplate]; // Рандомный выбор темплейта из нужной группы
-
+    //char *curTemplate = parameter.group[level].tmp[randomTemplate]; // Рандомный выбор темплейта из нужной группы
+    char *curTemplate = "%ABAA, %AHAA, с силой в $AH метр*A в секунду ветер станет частью сегодняшнего дня. $BB. Берегите себя.\n";
     for (int i = 0; i < strlen(curTemplate); ++i) { // Идём по строке. Анализируем посимвольно
         switch (curTemplate[i]) {                   // Если текущий символ темплейта...
             case '$': {                             // ..служебный символ для подстановки числа/слова в текст (формата $AB)

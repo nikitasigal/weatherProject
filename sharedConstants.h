@@ -46,6 +46,6 @@
 // for dataParser
 #define NUMS_COUNT 11
 #define WORD_COUNT 100
-#define CATEGORIES_COUNT 3
+#define CATEGORIES_COUNT 4
 
 #endif //WEATHERPROJECT_SHAREDCONSTANTS_H

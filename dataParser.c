@@ -18,7 +18,9 @@ void dataParse(const char *currentString) {
         prevDayNums[4] = curDayNums[4];
         prevDayNums[5] = curDayNums[5];
 
-        strcpy(prevDayStr[0][0], curDayStr[0][0]);
+        for (int i = 0; i < curCountPrecipitations; ++i) {
+            strcpy(prevDayStr[0][i], curDayStr[0][i]);
+        }
 
         prevDayNums[6] = curDayNums[6];
         prevDayNums[7] = curDayNums[7];
@@ -44,6 +46,7 @@ void dataParse(const char *currentString) {
 
         prevCountDirections = curCountDirections;
         prevCountScenes = curCountScenes;
+        prevCountPrecipitations = curCountPrecipitations;
     }
 
     char dateTemp[STRING_SIZE], tempNight[STRING_SIZE], tempDay[STRING_SIZE], tempSense[STRING_SIZE], precipitation[STRING_SIZE],
@@ -70,8 +73,13 @@ void dataParse(const char *currentString) {
         curDayNums[5] = curDayNums[4];
     //printf("%d  %d\n", curDayNums[4], curDayNums[5]);
 
-    sscanf(precipitation, "%s", curDayStr[0][0]);
-    //printf("%s\n", curDayStr[0][0]);
+    curCountPrecipitations = sscanf(precipitation, "%[^,\n],%[^,\n],%[^,\n],%[^,\n],%[^,\n],%[^,\n]", curDayStr[0][0], curDayStr[0][1],
+                            curDayStr[0][2], curDayStr[0][3],
+                            curDayStr[0][4], curDayStr[0][5]);
+    /*for (int i = 0; i < curCountPrecipitations; ++i) {
+        printf("%s ", curDayStr[0][i]);
+    }
+    printf("\n");*/
 
     int countSpeed = sscanf(speed, "%d-%d", &curDayNums[6], &curDayNums[7]);
     if (countSpeed == 1)
@@ -85,6 +93,7 @@ void dataParse(const char *currentString) {
     }
     printf("\n");*/
 
+    strcpy(curDayStr[3][0], gusts);     // Добавление порывов в массив строк
     int countGusts = sscanf(gusts, "%d-%d", &curDayNums[8], &curDayNums[9]);
     if (countGusts == 1)
         curDayNums[9] = curDayNums[8];

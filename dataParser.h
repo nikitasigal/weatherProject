@@ -21,8 +21,10 @@ Date prevDate;
 
 int curCountDirections; // Количество направлений ветра в день. Нужно для переопределения предыдущего дня
 int curCountScenes;     // Количество явлений в день. Нужно для переопределения предыдущего дня
+int curCountPrecipitations;       // Количество видов осадков за день
 int prevCountDirections;
 int prevCountScenes;
+int prevCountPrecipitations;
 
 int countDays;  // Количество дней
 
