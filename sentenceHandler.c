@@ -6,7 +6,7 @@
 #include <stdio.h>
 #include <math.h>
 // REMOVE!!!! TODO
-int randomTemplate = -1;    // Это сделано исключительно для тестирования. Позже уберём
+//int randomTemplate = -1;    // Это сделано исключительно для тестирования. Позже уберём
 
 /*
  * Функция для подсчёта рейтинга дня по 5 параметрам: температура, осадки, ветер, давления и явления.
@@ -34,15 +34,17 @@ double calcRate(char* request) {
     // Подсчёт рейтинга по осадкам
     double precipitationRate = 0;
     char prec[STRING_SIZE];
-    strcpy(prec, curDayStr[0][0]);
-    if (strcmp(prec, "снег") == 0)
-        precipitationRate += 5;
-    if (strcmp(prec, "дождь") == 0)
-        precipitationRate += 5.5;
-    if (strcmp(prec, "град") == 0)
-        precipitationRate += 9.5;
-    if (strcmp(prec, "кислотныйдождь") == 0)
-        precipitationRate += 300;
+    for (int i = 0; i < curDayStr[0].size; ++i) {
+        strcpy(prec, curDayStr[0].word[0]);
+        if (strcmp(prec, "снег") == 0)
+            precipitationRate += 5;
+        if (strcmp(prec, "дождь") == 0)
+            precipitationRate += 5.5;
+        if (strcmp(prec, "град") == 0)
+            precipitationRate += 9.5;
+        if (strcmp(prec, "кислотныйдождь") == 0)
+            precipitationRate += 300;
+    }
 
     if (strcmp(request, "Осадки") == 0)
         return precipitationRate;
@@ -66,9 +68,9 @@ double calcRate(char* request) {
 
     // Подсчёт рейтинга по явлениям
     double scenesRate = 0;
-    for (int i = 0; i < curCountScenes; ++i) {
+    for (int i = 0; i < curDayStr[2].size; ++i) {
         char scene[STRING_SIZE];
-        strcpy(scene, curDayStr[2][i]);
+        strcpy(scene, curDayStr[2].word[i]);
         if (strcmp(scene, "облачность") == 0)
             scenesRate += 2.3;
         if (strcmp(scene, "туман") == 0)
@@ -178,16 +180,16 @@ void percent(const char* request, int trigger) {    // Функция для %AB
  */
 
 void generator(char* ctg, int level) {
-    //int randomTemplate = rand() % Temperature.group[level].size;    // Random selection of template
-    randomTemplate = (randomTemplate + 1) % Temperature.group[level].size;  // DEBUG
+    int randomTemplate = rand() % Temperature.group[level].size;    // Random selection of template
+    //randomTemplate = (randomTemplate + 1) % Temperature.group[level].size;  // DEBUG
     printf("%d) ", randomTemplate + 1);                             // DEBUG
     int lastNum = 0;    // Last digit of previous number. Required to '*'
 
     CATEGORY parameter; // Выбор массива по выбранному параметру (температура, ветер, давление и т.п.)
     if (strcmp(ctg, "Температура") == 0)
         parameter = Temperature;
-    //char *curTemplate = parameter.group[level].tmp[randomTemplate]; // Рандомный выбор темплейта из нужной группы
-    char *curTemplate = "%ABAA, %AHAA, с силой в $AH метр*A в секунду ветер станет частью сегодняшнего дня. $BB. Берегите себя.\n";
+    char *curTemplate = parameter.group[level].tmp[randomTemplate]; // Рандомный выбор темплейта из нужной группы
+    //char *curTemplate = "Достаточно %AAAA день - $AD градус*A днем, $AF по ощущениям. $BA.\n";
     for (int i = 0; i < strlen(curTemplate); ++i) { // Идём по строке. Анализируем посимвольно
         switch (curTemplate[i]) {                   // Если текущий символ темплейта...
             case '$': {                             // ..служебный символ для подстановки числа/слова в текст (формата $AB)
@@ -203,6 +205,25 @@ void generator(char* ctg, int level) {
                     }
                     case 'B': {                     // ..'B', то нужно вставить слово из массива curDayStr (массив с данными дня)
                         // TODO
+                        ++i;
+                        // Капитализация первой буквы
+                        for (int j = 0; j < curDayStr[curTemplate[i] - 'A'].size; ++j) {
+                            char* first = curDayStr[curTemplate[i] - 'A'].word[j];
+                            if (j == 0)
+                                if (i == 0 || curTemplate[i - 4] == '.') {
+                                    if (first[0] == -48) {
+                                        first[1] = (char) (first[1] - 32);
+                                    } else {
+                                        first[0] -= 1;
+                                        first[1] = (char) (first[1] + 32);
+                                    }
+                                }
+
+                            if (j == curDayStr[curTemplate[i] - 'A'].size - 1)
+                                printf("%s", curDayStr[curTemplate[i] - 'A'].word[j]);
+                            else
+                                printf("%s, ", curDayStr[curTemplate[i] - 'A'].word[j]);
+                        }
                         break;
                     }
                     default:

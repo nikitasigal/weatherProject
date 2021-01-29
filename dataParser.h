@@ -8,23 +8,20 @@ typedef struct {
     int day, month, year;
 } Date;
 
+typedef struct {
+    int size;
+    char word[WORD_COUNT][STRING_SIZE];
+} Strings;
+
 int curDayNums[NUMS_COUNT];                               // 11 чисел из файла
-char curDayStr[CATEGORIES_COUNT][WORD_COUNT][STRING_SIZE]; /* Первый индекс - категория (осадки, направление, явления), второй - конкретное явление
-                                                         из файла. Предполагаю, что не может быть больше 6 явлений за один раз */
+Strings curDayStr[CATEGORIES_COUNT];
 Date curDate;                                            // curDate.day / curDate.month / curDate.year
 
 
 int prevDayNums[NUMS_COUNT];
-char prevDayStr[CATEGORIES_COUNT][WORD_COUNT][STRING_SIZE];
+Strings prevDayStr[CATEGORIES_COUNT];
 Date prevDate;
 
-
-int curCountDirections; // Количество направлений ветра в день. Нужно для переопределения предыдущего дня
-int curCountScenes;     // Количество явлений в день. Нужно для переопределения предыдущего дня
-int curCountPrecipitations;       // Количество видов осадков за день
-int prevCountDirections;
-int prevCountScenes;
-int prevCountPrecipitations;
 
 int countDays;  // Количество дней
 

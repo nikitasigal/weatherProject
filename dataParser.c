@@ -18,18 +18,15 @@ void dataParse(const char *currentString) {
         prevDayNums[4] = curDayNums[4];
         prevDayNums[5] = curDayNums[5];
 
-        for (int i = 0; i < curCountPrecipitations; ++i) {
-            strcpy(prevDayStr[0][i], curDayStr[0][i]);
+        for (int i = 0; i < curDayStr[0].size; ++i) {
+            strcpy(prevDayStr[0].word[i], curDayStr[0].word[i]);
         }
 
         prevDayNums[6] = curDayNums[6];
         prevDayNums[7] = curDayNums[7];
 
-        for (int i = 0; i < prevCountDirections; ++i) {
-            strcpy(prevDayStr[1][i], "");
-        }
-        for (int i = 0; i < curCountDirections; ++i) {
-            strcpy(prevDayStr[1][i], curDayStr[1][i]);
+        for (int i = 0; i < curDayStr[1].size; ++i) {
+            strcpy(prevDayStr[1].word[i], curDayStr[1].word[i]);
         }
 
         prevDayNums[8] = curDayNums[8];
@@ -37,16 +34,16 @@ void dataParse(const char *currentString) {
 
         prevDayNums[10] = curDayNums[10];
 
-        for (int i = 0; i < prevCountScenes; ++i) {
-            strcpy(prevDayStr[2][i], "");
-        }
-        for (int i = 0; i < curCountScenes; ++i) {
-            strcpy(prevDayStr[2][i], curDayStr[2][i]);
+        for (int i = 0; i < curDayStr[2].size; ++i) {
+            strcpy(prevDayStr[2].word[i], curDayStr[2].word[i]);
         }
 
-        prevCountDirections = curCountDirections;
-        prevCountScenes = curCountScenes;
-        prevCountPrecipitations = curCountPrecipitations;
+        strcpy(prevDayStr[3].word[0], curDayStr[3].word[0]);
+
+        prevDayStr[0].size = curDayStr[0].size;
+        prevDayStr[1].size = curDayStr[1].size;
+        prevDayStr[2].size = curDayStr[2].size;
+        prevDayStr[3].size = curDayStr[3].size;
     }
 
     char dateTemp[STRING_SIZE], tempNight[STRING_SIZE], tempDay[STRING_SIZE], tempSense[STRING_SIZE], precipitation[STRING_SIZE],
@@ -73,10 +70,10 @@ void dataParse(const char *currentString) {
         curDayNums[5] = curDayNums[4];
     //printf("%d  %d\n", curDayNums[4], curDayNums[5]);
 
-    curCountPrecipitations = sscanf(precipitation, "%[^,\n],%[^,\n],%[^,\n],%[^,\n],%[^,\n],%[^,\n]", curDayStr[0][0], curDayStr[0][1],
-                            curDayStr[0][2], curDayStr[0][3],
-                            curDayStr[0][4], curDayStr[0][5]);
-    /*for (int i = 0; i < curCountPrecipitations; ++i) {
+    curDayStr[0].size = sscanf(precipitation, "%[^,\n],%[^,\n],%[^,\n],%[^,\n],%[^,\n],%[^,\n]", curDayStr[0].word[0], curDayStr[0].word[1],
+                            curDayStr[0].word[2], curDayStr[0].word[3],
+                            curDayStr[0].word[4], curDayStr[0].word[5]);
+    /*for (int i = 0; i < curDayStr[0].size; ++i) {
         printf("%s ", curDayStr[0][i]);
     }
     printf("\n");*/
@@ -86,14 +83,54 @@ void dataParse(const char *currentString) {
         curDayNums[7] = curDayNums[6];
     //printf("%d  %d\n", curDayNums[6], curDayNums[7]);
 
-    curCountDirections = sscanf(direction, "%[^,\n],%[^,\n],%[^,\n],%[^,\n]", curDayStr[1][0], curDayStr[1][1],
-                                curDayStr[1][2], curDayStr[1][3]);
-    /*for (int i = 0; i < countDirections; ++i) {
-        printf("%s ", curDayStr[1][i]);
+    curDayStr[1].size = sscanf(direction, "%[^,\n],%[^,\n],%[^,\n],%[^,\n],%[^,\n],%[^,\n]", curDayStr[1].word[0], curDayStr[1].word[1],
+                                curDayStr[1].word[2], curDayStr[1].word[3], curDayStr[1].word[4], curDayStr[1].word[5]);
+    // Обработка направлений ветра
+    for (int i = 0; i < curDayStr[1].size; ++i) {
+        int first = (int)curDayStr[1].word[i][1];
+        if (strlen(curDayStr[1].word[i]) == 5) {
+            int second = (int)curDayStr[1].word[i][4];
+            switch (first) {
+                case -95:
+                    strcpy(curDayStr[1].word[i], "северо-");
+                    break;
+                case -82:
+                    strcpy(curDayStr[1].word[i], "юго-");
+                    break;
+            }
+            switch (second) {
+                case -110:
+                    strcat(curDayStr[1].word[i], "восточный");
+                    break;
+                case -105:
+                    strcat(curDayStr[1].word[i], "западный");
+                    break;
+            }
+        } else {
+            curDayStr[1].word[i][0] = '\0';     // UTF-8 must die
+            switch (first) {
+                case -95:
+                    strcpy(curDayStr[1].word[i], "северный");
+                    break;
+                case -110:
+                    strcat(curDayStr[1].word[i], "восточный");
+                    break;
+                case -82:
+                    strcpy(curDayStr[1].word[i], "южный");
+                    break;
+                case -105:
+                    strcat(curDayStr[1].word[i], "западный");
+                    break;
+            }
+        }
+    }
+    /*for (int i = 0; i < curDayStr[1].size; ++i) {
+        printf("%s ", curDayStr[1].word[i]);
     }
     printf("\n");*/
 
-    strcpy(curDayStr[3][0], gusts);     // Добавление порывов в массив строк
+    strcpy(curDayStr[3].word[0], gusts);     // Добавление порывов в массив строк
+    curDayStr[3].size = 1;
     int countGusts = sscanf(gusts, "%d-%d", &curDayNums[8], &curDayNums[9]);
     if (countGusts == 1)
         curDayNums[9] = curDayNums[8];
@@ -103,10 +140,10 @@ void dataParse(const char *currentString) {
     sscanf(pressure, "%d", &curDayNums[10]);
     //printf("%d\n", curDayNums[10]);
 
-    curCountScenes = sscanf(scene, "%[^,\n],%[^,\n],%[^,\n],%[^,\n],%[^,\n],%[^,\n]", curDayStr[2][0], curDayStr[2][1],
-                            curDayStr[2][2], curDayStr[2][3],
-                            curDayStr[2][4], curDayStr[2][5]);
-    /*for (int i = 0; i < countScenes; ++i) {
+    curDayStr[2].size = sscanf(scene, "%[^,\n],%[^,\n],%[^,\n],%[^,\n],%[^,\n],%[^,\n]", curDayStr[2].word[0], curDayStr[2].word[1],
+                            curDayStr[2].word[2], curDayStr[2].word[3],
+                            curDayStr[2].word[4], curDayStr[2].word[5]);
+    /*for (int i = 0; i < curDayStr[2].size; ++i) {
         printf("%s ", curDayStr[2][i]);
     }
     printf("\n");*/
