@@ -50,7 +50,7 @@ int main() {
     SetConsoleCP(CP_UTF8);
     SetConsoleOutputCP(CP_UTF8);
 
-    //random generator
+    //random generateSentence
     srand(time(NULL));
 
     //global files parse
@@ -70,7 +70,7 @@ int main() {
     //ALL THE MAGIC HAPPENS HERE
     while (!feof(data) && fgets(currentString, STRING_SIZE, data)) {
         dataParse(currentString);
-        generator("Температура", 2);    // Вызов генератора для тестаВ
+        generateSentence("Температура", 2);    // Вызов генератора для тестаВ
 
         // Вывод UTF-блевотины
         /*char* alphabet = "АБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдежзийклмнопрстуфхцчшщъыьэюя";

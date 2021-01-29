@@ -1,6 +1,7 @@
-#include "dataParser.h"
 #include <stdio.h>
 #include <string.h>
+
+#include "dataParser.h"
 
 void dataParse(const char *currentString) {
     // Copy curDay struct to prevDay (excepting the first day)
@@ -97,6 +98,8 @@ void dataParse(const char *currentString) {
                 case -82:
                     strcpy(curDayStr[1].word[i], "юго-");
                     break;
+                default:
+                    break;
             }
             switch (second) {
                 case -110:
@@ -104,6 +107,8 @@ void dataParse(const char *currentString) {
                     break;
                 case -105:
                     strcat(curDayStr[1].word[i], "западный");
+                    break;
+                default:
                     break;
             }
         } else {
@@ -120,6 +125,8 @@ void dataParse(const char *currentString) {
                     break;
                 case -105:
                     strcat(curDayStr[1].word[i], "западный");
+                    break;
+                default:
                     break;
             }
         }

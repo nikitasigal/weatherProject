@@ -40,10 +40,11 @@
 #ifndef WEATHERPROJECT_SHAREDCONSTANTS_H
 #define WEATHERPROJECT_SHAREDCONSTANTS_H
 
+//string and word sizes for char arrays
 #define WORD_SIZE 30
 #define STRING_SIZE 300
 
-// for dataParser
+//constants from dataParser
 #define NUMS_COUNT 11
 #define WORD_COUNT 100
 #define CATEGORIES_COUNT 4
