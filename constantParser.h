@@ -40,10 +40,9 @@ typedef struct Dictionary {
 } DICTIONARY;
 DICTIONARY
         Adjectives,
-        Adverbs,
-        Nouns;
+        Adverbs;
 
-//endings table
+//endings tables
 #define ADJ_END_ROWS 20
 #define ADJ_END_COLUMNS 6
 char AdjEndings[ADJ_END_ROWS][ADJ_END_COLUMNS][WORD_SIZE];

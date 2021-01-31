@@ -126,9 +126,6 @@ void calcPercent(const char *request, int trigger) {    // Функция для
         case 1:
             dictionary = Adverbs;
             break;
-        case 2:
-            dictionary = Nouns;
-            break;
         default:
             printf("Error");        //DEBUG
             break;

@@ -9,7 +9,6 @@ void categoryParse(TEMP_CATEGORY *ctg, const char filename[STRING_SIZE]) {
     char temp[STRING_SIZE];
     while (!feof(f)) {
         fgets(temp, STRING_SIZE, f);
-        char *str = temp;
         if (temp[0] == '!') {
             groupID++;
             (*ctg).size++;
@@ -84,7 +83,6 @@ void constantParse() {
     //extracting dictionaries
     dictionaryParse(&Adjectives, "Dictionaries/adjectives.txt");
     dictionaryParse(&Adverbs, "Dictionaries/adverbs.txt");
-    dictionaryParse(&Nouns, "Dictionaries/nouns.txt");
 
     //extracting weather template categories
     categoryParse(&Temperature, "Templates/temperature.txt");
