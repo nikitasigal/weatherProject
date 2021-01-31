@@ -75,11 +75,15 @@ int main() {
     while (!feof(data) && fgets(currentString, STRING_SIZE, data)) {
         dataParse(currentString);
         fprintf(test, "%d.%d.%d\n", curDate.day, curDate.month, curDate.year);
-        generateNumerical(0);    // Вызов генератора для теста
-        generateText(1);
-        generateNumerical(2);
-        generateNumerical(3);
-        generateText(4);
+
+        sortCategories();
+
+        for (int i = 0; i < 5; ++i) {
+            if (Order[i].ctg == 1 || Order[i].ctg == 4)
+                generateText(Order[i].ctg);
+            else
+                generateNumerical(Order[i].ctg);
+        }
 
         fprintf(test, "\n\n");
         //void (*msg) (char*, int);

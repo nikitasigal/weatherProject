@@ -19,7 +19,7 @@ char precipitationsAndEvents[11][STRING_SIZE] = {"дождь", "снег", "ки
  * Предполагается, что норма по параметру ниже 5 единиц (касается как каждого параметра, так и рейтинга дня).
  * Но пока ничего не корректировалось и не тестировалось.
  */
-double calcRating(char *request) {
+double calcRating(int ctg) {
     double rate = 0;
 
     // Подсчёт рейтинга по температуре
@@ -43,7 +43,7 @@ double calcRating(char *request) {
             tempRate = sqrt(fabs(diffTemp * diffTemp * diffTemp)) * 0.45;
     }
 
-    if (strcmp(request, "Температура") == 0)    // Если запрос был по температуре, то возвращаем посчитанное значение
+    if (ctg == 0)    // Если запрос был по температуре, то возвращаем посчитанное значение
         return tempRate;
 
     // Подсчёт рейтинга по осадкам
@@ -61,7 +61,7 @@ double calcRating(char *request) {
             precipitationRate += 300;
     }
 
-    if (strcmp(request, "Осадки") == 0)
+    if (ctg == 1)
         return precipitationRate;
 
     // Подсчёт рейтинга по ветру
@@ -70,7 +70,7 @@ double calcRating(char *request) {
     double averageWind = ((curDayNums[6] + curDayNums[7]) + ((curDayNums[8] + curDayNums[9]) * 0.6)) / 4.0;
     windRate += sqrt((averageWind * averageWind * averageWind) / 10.0);
 
-    if (strcmp(request, "Ветер") == 0)
+    if (ctg == 2)
         return windRate;
 
     // Подсчёт рейтинга по давлению
@@ -78,7 +78,7 @@ double calcRating(char *request) {
     double diffPressure = curDayNums[10] - 748;
     pressureRate += (sqrt((fabs)(diffPressure * diffPressure * diffPressure)) / 14);
 
-    if (strcmp(request, "Давление") == 0)
+    if (ctg == 3)
         return pressureRate;
 
     // Подсчёт рейтинга по явлениям
@@ -100,13 +100,13 @@ double calcRating(char *request) {
             scenesRate += 300;
     }
 
-    if (strcmp(request, "Явления") == 0)
+    if (ctg == 4)
         return scenesRate;
 
     // Среднее арифметическое рейтингов. Рейтинг дня
     rate += (fabs(tempRate) + precipitationRate + windRate + fabs(pressureRate) + scenesRate) / 5.0;
 
-    if (strcmp(request, "Рейтинг дня") == 0)
+    if (ctg == 5)
         return rate;
 
     // DEBUG INFORMATION
@@ -114,6 +114,27 @@ double calcRating(char *request) {
            windRate, pressureRate, scenesRate, rate);
 
     return -9999;
+}
+
+void sortCategories() {
+    for (int i = 0; i < 5; ++i) {
+        Order[i].ctg = i;
+        Order[i].rating = calcRating(i);
+    }
+
+    for (int i = 0; i < 5; ++i) {
+        for (int j = i + 1; j < 5; ++j) {
+            if (Order[i].rating < Order[j].rating) {
+                double temp = Order[i].ctg;
+                Order[i].ctg = Order[j].ctg;
+                Order[j].ctg = (int) temp;
+
+                temp = Order[i].rating;
+                Order[i].rating = Order[j].rating;
+                Order[j].rating = temp;
+            }
+        }
+    }
 }
 
 int getTemperatureLevel() {
@@ -165,7 +186,7 @@ int getPressureLevel() {
     }
 }
 
-int getPrecipitationOrEventGroup(const char* request) {
+int getPrecipitationOrEventGroup(const char *request) {
     for (int i = 0; i < 11; ++i) {
         if (strcmp(precipitationsAndEvents[i], request) == 0) {
             return i;
