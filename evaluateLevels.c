@@ -8,8 +8,8 @@
 #include "dataParser.h"
 #include "constantParser.h"
 
-char precipitationsAndEvents[11][STRING_SIZE] = {"дождь", "снег", "кислотныйдождь", "град", "туман", "метель", "гололедица",
-                                                 "гроза", "конецсвета", "никитаgay", "слякоть"};
+char precipitationsAndEvents[11][STRING_SIZE] = {"дождь", "снег", "кислотный.дождь", "град", "туман", "метель", "гололедица",
+                                                 "гроза", "конец.света", "никитаgay", "слякоть"};
 
 /*
  * Функция для подсчёта рейтинга дня по 5 параметрам: температура, осадки, ветер, давления и явления.
@@ -57,7 +57,7 @@ double calcRating(char *request) {
             precipitationRate += 6.5;
         if (strcmp(precipitation, "град") == 0)
             precipitationRate += 9.5;
-        if (strcmp(precipitation, "кислотныйдождь") == 0)
+        if (strcmp(precipitation, "кислотный.дождь") == 0)
             precipitationRate += 300;
     }
 
@@ -96,7 +96,7 @@ double calcRating(char *request) {
             scenesRate += 9.5;
         if (strcmp(scene, "гроза") == 0)
             scenesRate += 15;
-        if (strcmp(scene, "конецсвета") == 0)
+        if (strcmp(scene, "конец.света") == 0)
             scenesRate += 300;
     }
 

@@ -233,10 +233,15 @@ void generateText(int ctg) {
         printf("%s", TextBeginnings.group[beginningGroup].tmp[beginningIndex]);
 
         int followupIndex = rand() % TextFollowups.group[beginningGroup].size;
-        printf("%s", TextFollowups.group[beginningGroup].tmp[followupIndex]);
+        printf("%s ", TextFollowups.group[beginningGroup].tmp[followupIndex]);
 
         int eventIndex = getPrecipitationOrEventGroup(curDayStr[strArg].word[i]);
-        printf(" %s", curDayStr[strArg].word[i]);
+        for (int j = 0; j < strlen(curDayStr[strArg].word[i]); ++j) {
+            if (curDayStr[strArg].word[i][j] != '.')
+                printf("%c", curDayStr[strArg].word[i][j]);
+            else
+                printf(" ");
+        }
 
         int endIndex = rand() % Events.group[eventIndex].size;
         printf("%s ", Events.group[eventIndex].tmp[endIndex]);
