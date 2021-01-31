@@ -20,7 +20,8 @@ TEMP_CATEGORY
         Pressure,
         Events,
         TextBeginnings,
-        TextFollowups;
+        TextFollowups,
+        BeginSentence;
 
 
 //synonym dictionaries

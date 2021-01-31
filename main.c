@@ -78,6 +78,7 @@ int main() {
 
         sortCategories();
 
+        generateNumerical(5);
         for (int i = 0; i < 5; ++i) {
             if (Order[i].ctg == 1 || Order[i].ctg == 4)
                 generateText(Order[i].ctg);
@@ -86,6 +87,7 @@ int main() {
         }
 
         fprintf(test, "\n\n");
+
         //void (*msg) (char*, int);
         //msg = generateNumerical;
         //msg("Ветер", 0);

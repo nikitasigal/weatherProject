@@ -92,6 +92,7 @@ void constantParse() {
     categoryParse(&Wind, "Templates/wind.txt");
     categoryParse(&Pressure, "Templates/pressure.txt");
     categoryParse(&Events, "Templates/events.txt");
+    categoryParse(&BeginSentence, "Templates/beginSentence.txt");
 
     //extracting components of complex text templates
     categoryParse(&TextBeginnings, "Templates/Text Complex Parts/beginnings.txt");

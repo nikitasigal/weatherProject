@@ -15,6 +15,8 @@ int getPressureLevel();
 
 int getPrecipitationOrEventGroup(const char *request);
 
+int getDayLevel();
+
 double calcRating(int ctg);
 
 void sortCategories();

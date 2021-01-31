@@ -193,6 +193,10 @@ void generateNumerical(int ctg) {
         level = getPressureLevel();
         parameter = Pressure;
     }
+    if (ctg == 5) {
+        level = getDayLevel();
+        parameter = BeginSentence;
+    }
 
     int randomTemplate = rand() % parameter.group[level].size;    // Random selection of template
     int lastNum = 0;    // Last inserted numerical value. Used in *function to connect nouns with their respected values

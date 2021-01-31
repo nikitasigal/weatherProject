@@ -194,3 +194,16 @@ int getPrecipitationOrEventGroup(const char *request) {
     }
     return 0;
 }
+
+int getDayLevel() {
+    double currentDayRating = calcRating(5);
+    if (currentDayRating < 2.5) {
+        return 0;
+    } else {
+        if (currentDayRating < 5) {
+            return 1;
+        } else {
+            return 2;
+        }
+    }
+}
