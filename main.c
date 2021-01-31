@@ -71,6 +71,8 @@ int main() {
     while (!feof(data) && fgets(currentString, STRING_SIZE, data)) {
         dataParse(currentString);
         generateSentence("Температура", 2);    // Вызов генератора для тестаВ
+        //generator("Температура", 1);    // Вызов генератора для тестаВ
+        calcRate("");
 
         // Вывод UTF-блевотины
         /*char* alphabet = "АБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдежзийклмнопрстуфхцчшщъыьэюя";

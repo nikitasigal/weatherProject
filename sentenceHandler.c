@@ -62,7 +62,7 @@ double calcRate(char *request) {
     // Подсчёт рейтинга по давлению
     double pressureRate = 0;
     double diffPressure = curDayNums[10] - 748;
-    pressureRate += (sqrt(diffPressure * diffPressure * diffPressure) / 5.0);
+    pressureRate += (sqrt((fabs)(diffPressure * diffPressure * diffPressure)) / 5.0);
 
     if (strcmp(request, "Давление") == 0)
         return pressureRate;
