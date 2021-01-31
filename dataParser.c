@@ -74,6 +74,8 @@ void dataParse(const char *currentString) {
     curDayStr[0].size = sscanf(precipitation, "%[^,\n],%[^,\n],%[^,\n],%[^,\n],%[^,\n],%[^,\n]", curDayStr[0].word[0], curDayStr[0].word[1],
                             curDayStr[0].word[2], curDayStr[0].word[3],
                             curDayStr[0].word[4], curDayStr[0].word[5]);
+    if (strcmp(curDayStr[0].word[0], "нет") == 0)
+        curDayStr[0].size = 0;
     /*for (int i = 0; i < curDayStr[0].size; ++i) {
         printf("%s ", curDayStr[0][i]);
     }
@@ -86,6 +88,8 @@ void dataParse(const char *currentString) {
 
     curDayStr[1].size = sscanf(direction, "%[^,\n],%[^,\n],%[^,\n],%[^,\n],%[^,\n],%[^,\n]", curDayStr[1].word[0], curDayStr[1].word[1],
                                 curDayStr[1].word[2], curDayStr[1].word[3], curDayStr[1].word[4], curDayStr[1].word[5]);
+    if (strcmp(curDayStr[1].word[0], "нет") == 0)
+        curDayStr[1].size = 0;
     // Обработка направлений ветра
     for (int i = 0; i < curDayStr[1].size; ++i) {
         int first = (int)curDayStr[1].word[i][1];
@@ -150,6 +154,8 @@ void dataParse(const char *currentString) {
     curDayStr[2].size = sscanf(scene, "%[^,\n],%[^,\n],%[^,\n],%[^,\n],%[^,\n],%[^,\n]", curDayStr[2].word[0], curDayStr[2].word[1],
                             curDayStr[2].word[2], curDayStr[2].word[3],
                             curDayStr[2].word[4], curDayStr[2].word[5]);
+    if (strcmp(curDayStr[2].word[0], "нет") == 0)
+        curDayStr[2].size = 0;
     /*for (int i = 0; i < curDayStr[2].size; ++i) {
         printf("%s ", curDayStr[2][i]);
     }
