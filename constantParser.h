@@ -4,7 +4,7 @@
 #include "sharedConstants.h"
 
 //template categories
-#define TEMP_CATEGORY_SIZE 10
+#define TEMP_CATEGORY_SIZE 20
 #define TEMP_GROUP_SIZE 10
 typedef struct TemplateGroup {
     int size;
@@ -16,11 +16,11 @@ typedef struct TemplateCategory {
 } TEMP_CATEGORY;
 TEMP_CATEGORY
         Temperature,
-        Precipitation,
         Wind,
         Pressure,
-        Events;
-
+        Events,
+        TextBeginnings,
+        TextFollowups;
 
 
 //synonym dictionaries

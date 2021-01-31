@@ -9,6 +9,7 @@ void categoryParse(TEMP_CATEGORY *ctg, const char filename[STRING_SIZE]) {
     char temp[STRING_SIZE];
     while (!feof(f)) {
         fgets(temp, STRING_SIZE, f);
+        temp[strlen(temp) - 1] = 0;
         if (temp[0] == '!') {
             groupID++;
             (*ctg).size++;
@@ -86,8 +87,11 @@ void constantParse() {
 
     //extracting weather template categories
     categoryParse(&Temperature, "Templates/temperature.txt");
-    categoryParse(&Precipitation, "Templates/precipitation.txt");
     categoryParse(&Wind, "Templates/wind.txt");
     categoryParse(&Pressure, "Templates/pressure.txt");
     categoryParse(&Events, "Templates/events.txt");
+
+    //extracting components of complex text templates
+    categoryParse(&TextBeginnings, "Templates/Text Complex Parts/beginnings.txt");
+    categoryParse(&TextFollowups, "Templates/Text Complex Parts/followups.txt");
 }

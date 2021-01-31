@@ -45,32 +45,14 @@
 #include "constantParser.h"
 #include "dataParser.h"
 #include "sentenceHandler.h"
+#include "evaluateLevels.h"
 
-/*int tempFoo() {
-    if (зима) {
-        if (difference > 7) {
-            жарко
-        } else {
-            if (difference < -7) {
-                холодно
-            } else {
-                нормально
-            }
-        }
-    }
-    return group;
-}
-
-int pressureFoo() {
-    if (difference > 12) ...
-    return group;
-}*/
 
 int main() {
     SetConsoleCP(CP_UTF8);
     SetConsoleOutputCP(CP_UTF8);
 
-    //random generateSentence
+    //random generateNumerical
     srand(time(NULL));
 
     //global files parse
@@ -90,17 +72,17 @@ int main() {
     //ALL THE MAGIC HAPPENS HERE
     while (!feof(data) && fgets(currentString, STRING_SIZE, data)) {
         dataParse(currentString);
-        //generateSentence("Температура", 0);    // Вызов генератора для теста
-        //generateSentence("Ветер", 0);
-        //generateSentence("Осадки", 0);
+        generateNumerical(0);    // Вызов генератора для теста
+        generateText(1);
+        generateNumerical(2);
+        generateNumerical(3);
+        generateText(4);
 
+        printf("\n");
         //void (*msg) (char*, int);
-        //msg = generateSentence;
+        //msg = generateNumerical;
         //msg("Ветер", 0);
 
-        calcRate("");
-        printf("\n");
-        //calcRate("");
 
         // Определяем уровень разных категорий разными функциями
         // Массив ссылок на функции
@@ -114,7 +96,7 @@ int main() {
         for (int i = 0; i < strlen(alphabet); i += 2) {
             printf("%c%c - %d, %d\n", alphabet[i], alphabet[i + 1], (int) (alphabet[i]), (int) (alphabet[i + 1]));
         }*/
-        //printf("%lf\n", calcRate("Ветер"));
+        //printf("%lf\n", calcRating("Ветер"));
     }
     /*
      *

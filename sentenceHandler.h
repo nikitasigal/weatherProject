@@ -1,10 +1,10 @@
 #ifndef WEATHERPROJECT_SENTENCEHANDLER_H
 #define WEATHERPROJECT_SENTENCEHANDLER_H
 
-double calcRate(char *request);
+#include "constantParser.h"
 
-void calcPercent(const char *curTemplate, int *i);
+void generateNumerical(int ctg);
 
-void generateSentence(char *cat, int level);
+void generateText(int ctg);
 
 #endif //WEATHERPROJECT_SENTENCEHANDLER_H
