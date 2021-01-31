@@ -51,8 +51,10 @@ void constantParse() {
     //wind force scale
     //it is not possible to initialize global variables in the .h files
     //as a result, it will be initialized multiple times in different .c files and will cause conflicts
-    double windTemp[] = {0, 5.5, 17.2, 28.5};
-    StatWindScale = windTemp;
+    StatWindScale[0] = 0;
+    StatWindScale[1] = 5.5;
+    StatWindScale[2] = 17.2;
+    StatWindScale[3] = 28.5;
 
     FILE *f;  //universal file variable
 

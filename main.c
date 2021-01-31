@@ -78,7 +78,7 @@ int main() {
         generateNumerical(3);
         generateText(4);
 
-        printf("\n");
+        printf("\n\n");
         //void (*msg) (char*, int);
         //msg = generateNumerical;
         //msg("Ветер", 0);

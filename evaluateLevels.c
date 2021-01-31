@@ -120,20 +120,20 @@ int getTemperatureLevel() {
     double averageTemperature = ((curDayNums[2] + curDayNums[3] + curDayNums[4] + curDayNums[5]) / 4.0) - StatTemperature[curDate.month - 1];
     if (curDate.month >= 4 && curDate.month <= 9) {
         if (averageTemperature < -5) {
-            return 0;
+            return 2;
         } else {
             if (averageTemperature > 5) {
-                return 2;
+                return 0;
             } else {
                 return 1;
             }
         }
     } else {
         if (averageTemperature < -7) {
-            return 3;
+            return 5;
         } else {
             if (averageTemperature > 7) {
-                return 5;
+                return 3;
             } else {
                 return 4;
             }
@@ -144,6 +144,7 @@ int getTemperatureLevel() {
 int getWindLevel() {
     double averageWind = ((curDayNums[6] + curDayNums[7]) + ((curDayNums[8] + curDayNums[9]) * 0.6)) / 4.0;
     for (int i = 1; i < 4; ++i) {
+        int windScale = StatWindScale[i];
         if (averageWind < StatWindScale[i]) {
             return 4 - i;
         }
@@ -159,7 +160,7 @@ int getPressureLevel() {
         if (pressureDifference > 12) {
             return 0;
         } else {
-            return 2;
+            return 1;
         }
     }
 }

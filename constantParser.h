@@ -53,7 +53,7 @@ char NounEndings[NOUN_END_ROWS][NOUN_END_COLUMNS][WORD_SIZE];
 
 //simple values
 int StatTemperature[12], StatPressure[12];   //Average statistical temperatures and pressures by month of the year
-double *StatWindScale;                       //Scale of wind level relative to it's speed
+double StatWindScale[4];                       //Scale of wind level relative to it's speed
 
 
 //global parse function
