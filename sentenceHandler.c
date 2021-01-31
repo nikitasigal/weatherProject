@@ -234,7 +234,6 @@ void generateText(int ctg) {
 
         int followupIndex = rand() % TextFollowups.group[beginningGroup].size;
         fprintf(test, "%s ", TextFollowups.group[beginningGroup].tmp[followupIndex]);
-        fprintf(test, "%s", TextFollowups.group[beginningGroup].tmp[followupIndex]);
 
         int eventIndex = getPrecipitationOrEventGroup(curDayStr[strArg].word[i]);
         for (int j = 0; j < strlen(curDayStr[strArg].word[i]); ++j) {
@@ -243,7 +242,6 @@ void generateText(int ctg) {
             else
                 fprintf(test, " ");
         }
-        fprintf(test, " %s", curDayStr[strArg].word[i]);
 
         int endIndex = rand() % Events.group[eventIndex].size;
         fprintf(test, "%s ", Events.group[eventIndex].tmp[endIndex]);
