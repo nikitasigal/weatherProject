@@ -47,8 +47,9 @@
 #include "sentenceHandler.h"
 #include "evaluateLevels.h"
 
-
 int main() {
+    test = fopen("test.txt", "w");
+
     SetConsoleCP(CP_UTF8);
     SetConsoleOutputCP(CP_UTF8);
 
@@ -68,17 +69,19 @@ int main() {
     char currentString[STRING_SIZE] = { 0 }; // I think everyone knows what is this for
     fgets(currentString, STRING_SIZE, data); // skipping the first lines with table headings
 
+
     //THE MAIN PROGRAM CYCLE
     //ALL THE MAGIC HAPPENS HERE
     while (!feof(data) && fgets(currentString, STRING_SIZE, data)) {
         dataParse(currentString);
+        fprintf(test, "%d.%d.%d\n", curDate.day, curDate.month, curDate.year);
         generateNumerical(0);    // Вызов генератора для теста
         generateText(1);
         generateNumerical(2);
         generateNumerical(3);
         generateText(4);
 
-        printf("\n\n");
+        fprintf(test, "\n\n");
         //void (*msg) (char*, int);
         //msg = generateNumerical;
         //msg("Ветер", 0);
@@ -112,6 +115,7 @@ int main() {
 
     //closing forecast data file
     fclose(data);
+    fclose(test);
 
 
 

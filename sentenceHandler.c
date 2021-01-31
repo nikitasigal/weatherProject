@@ -50,7 +50,7 @@ void calcPercent(const char *curTemplate, int *i) {    // Функция для 
             dictionary = Adverbs;
             break;
         default:
-            printf("Error");        //DEBUG
+            fprintf(test, "Error");        //DEBUG
             break;
     }
 
@@ -101,11 +101,11 @@ void calcPercent(const char *curTemplate, int *i) {    // Функция для 
     }
 
     //вывод получившегося слова
-    printf("%s", wordBase);
+    fprintf(test, "%s", wordBase);
     if (wordGenus == 0 && wordCase == 0)
-        printf("%s", dictionary.group[groupID].syn[randID].end);    //в этом случае выводится окончание из словаря (пустое для сущ. и нар.)
+        fprintf(test, "%s", dictionary.group[groupID].syn[randID].end);    //в этом случае выводится окончание из словаря (пустое для сущ. и нар.)
     else
-        printf("%s", AdjEndings[endingCategory * 4 + wordGenus][wordCase]);
+        fprintf(test, "%s", AdjEndings[endingCategory * 4 + wordGenus][wordCase]);
 }
 
 void calcDollar(const char *curTemplate, int *lastNum, int *i) {
@@ -114,7 +114,7 @@ void calcDollar(const char *curTemplate, int *lastNum, int *i) {
         case 'A': {                                          // ..'A', то нужно вставить число из массива curDayNums (массив с данными дня)
             ++(*i);                                          // Смотрим следующий символ в записи $. Он означает, какое число из массива нужно взять
             (*lastNum) = curDayNums[curTemplate[(*i)] - 'A']; // Берём число из массива
-            printf("%d", (*lastNum));                // Выводим то, что просили
+            fprintf(test, "%d", (*lastNum));                // Выводим то, что просили
             (*lastNum) %= 100;                             // Запоминаем последние две цифры числа. Это нужно для склонения последующего слова (например, 11 градусОВ, 2 градусА)
             (*lastNum) = abs((*lastNum));                     // Нам не нужно запоминать знак числа. Берём по модулю для простоты
             break;                                      // $ обработан
@@ -136,14 +136,14 @@ void calcDollar(const char *curTemplate, int *lastNum, int *i) {
                     }
 
                 if (j == curDayStr[curTemplate[(*i)] - 'A'].size - 1)
-                    printf("%s", curDayStr[curTemplate[(*i)] - 'A'].word[j]);
+                    fprintf(test, "%s", curDayStr[curTemplate[(*i)] - 'A'].word[j]);
                 else
-                    printf("%s, ", curDayStr[curTemplate[(*i)] - 'A'].word[j]);
+                    fprintf(test, "%s, ", curDayStr[curTemplate[(*i)] - 'A'].word[j]);
             }
             break;
         }
         default:
-            printf("Error");    // Отладка
+            fprintf(test, "Error");    // Отладка
     }
 }
 
@@ -152,7 +152,7 @@ void calcAsterisk(int lastNum, const char *curTemplate, int *i) {
     ++(*i);                                    // Смотрим, какого падежа требуется слово
 // Особый случай для чисел с окончанием на 11-14
     if (lastNum >= 11 && lastNum <= 14) {   // Если число оканчивается на 11-14, то окончание -ов (11 градусов)
-        printf("ов");
+        fprintf(test, "ов");
     } else {
         switch (lastNum % 10) {             // В зависимости от последней цифры меняется окончание следующего слова
             case 1:                         // Нулевое окончание (1 градус)
@@ -168,7 +168,7 @@ void calcAsterisk(int lastNum, const char *curTemplate, int *i) {
         }
         int caseWord = curTemplate[*i] - 'A';                                        // Получение номера падежа
         if (!(category == 0 && (caseWord == 0 || caseWord == 3)))                   // Нуууу, выбор окончания..
-            printf("%s", NounEndings[category][curTemplate[*i] - 'A']);  // Берём окончание из словаря
+            fprintf(test, "%s", NounEndings[category][curTemplate[*i] - 'A']);  // Берём окончание из словаря
     }
 }
 
@@ -214,11 +214,11 @@ void generateNumerical(int ctg) {
                 break;
             }
             default:                                    // Не служебный символ. Выводим
-                printf("%c", curTemplate[i]);
+                fprintf(test, "%c", curTemplate[i]);
                 break;
         }
     }
-    printf(" ");
+    fprintf(test, " ");
 }
 
 void generateText(int ctg) {
@@ -230,15 +230,15 @@ void generateText(int ctg) {
     for (int i = 0; i < curDayStr[strArg].size; ++i) {
         int beginningGroup = rand() % TextBeginnings.size;
         int beginningIndex = rand() % TextBeginnings.group[beginningGroup].size;
-        printf("%s", TextBeginnings.group[beginningGroup].tmp[beginningIndex]);
+        fprintf(test, "%s", TextBeginnings.group[beginningGroup].tmp[beginningIndex]);
 
         int followupIndex = rand() % TextFollowups.group[beginningGroup].size;
-        printf("%s", TextFollowups.group[beginningGroup].tmp[followupIndex]);
+        fprintf(test, "%s", TextFollowups.group[beginningGroup].tmp[followupIndex]);
 
         int eventIndex = getPrecipitationOrEventGroup(curDayStr[strArg].word[i]);
-        printf(" %s", curDayStr[strArg].word[i]);
+        fprintf(test, " %s", curDayStr[strArg].word[i]);
 
         int endIndex = rand() % Events.group[eventIndex].size;
-        printf("%s ", Events.group[eventIndex].tmp[endIndex]);
+        fprintf(test, "%s ", Events.group[eventIndex].tmp[endIndex]);
     }
 }
