@@ -22,12 +22,25 @@ double calcRate(char *request) {
     double rate = 0;
 
     // Подсчёт рейтинга по температуре
-    double diffTemp = ((curDayNums[2] + curDayNums[3] + curDayNums[1] + curDayNums[0]) / 4.0) - StatTemperature[curDate.month - 1];//Отклонение среднедневной температуры от нормы
+    double diffTemp = ((curDayNums[2] + curDayNums[3] + curDayNums[4] + curDayNums[5]) / 4.0) - StatTemperature[curDate.month - 1];//Отклонение среднедневной температуры от нормы
     double tempRate;
-    if (diffTemp > 0)   // Если отклонение от нормы в положительную сторону, то это не так плохо, нежели в отрицательную
-        tempRate = sqrt(fabs(diffTemp * diffTemp * diffTemp)) * 0.194;
-    else
-        tempRate = -sqrt(fabs(diffTemp * diffTemp * diffTemp)) * 0.31;
+
+    switch (curDate.month) {
+        case 10:
+        case 11:
+        case 12:
+        case 1:
+        case 2:
+        case 3:
+        case 4:
+            tempRate = sqrt(fabs(diffTemp * diffTemp * diffTemp)) * 0.25;
+            if (diffTemp > 0) {
+                tempRate *= 0.63;
+            }
+            break;
+        default:
+            tempRate = sqrt(fabs(diffTemp * diffTemp * diffTemp)) * 0.45;
+    }
 
     if (strcmp(request, "Температура") == 0)    // Если запрос был по температуре, то возвращаем посчитанное значение
         return tempRate;
@@ -40,7 +53,7 @@ double calcRate(char *request) {
         if (strcmp(precipitation, "снег") == 0)
             precipitationRate += 5;
         if (strcmp(precipitation, "дождь") == 0)
-            precipitationRate += 5.5;
+            precipitationRate += 6.5;
         if (strcmp(precipitation, "град") == 0)
             precipitationRate += 9.5;
         if (strcmp(precipitation, "кислотныйдождь") == 0)
@@ -53,7 +66,7 @@ double calcRate(char *request) {
     // Подсчёт рейтинга по ветру
     // WARNING!!! Don't use wind-rate for division into levels. Use StatWindScale
     double windRate = 0;
-    double averageWind = (((curDayNums[6] + curDayNums[7]) / 2.0) + ((curDayNums[8] + curDayNums[9]) * 0.8 / 2.0)) / 2.5;
+    double averageWind = ((curDayNums[6] + curDayNums[7]) + ((curDayNums[8] + curDayNums[9]) * 0.6)) / 4.0;
     windRate += sqrt((averageWind * averageWind * averageWind) / 10.0);
 
     if (strcmp(request, "Ветер") == 0)
@@ -62,7 +75,7 @@ double calcRate(char *request) {
     // Подсчёт рейтинга по давлению
     double pressureRate = 0;
     double diffPressure = curDayNums[10] - 748;
-    pressureRate += (sqrt((fabs)(diffPressure * diffPressure * diffPressure)) / 5.0);
+    pressureRate += (sqrt((fabs)(diffPressure * diffPressure * diffPressure)) / 14);
 
     if (strcmp(request, "Давление") == 0)
         return pressureRate;
@@ -72,12 +85,12 @@ double calcRate(char *request) {
     for (int i = 0; i < curDayStr[2].size; ++i) {
         char scene[STRING_SIZE];
         strcpy(scene, curDayStr[2].word[i]);
-        if (strcmp(scene, "облачность") == 0)
-            scenesRate += 2.3;
+        if (strcmp(scene, "слякоть") == 0)
+            scenesRate += 4;
         if (strcmp(scene, "туман") == 0)
-            scenesRate += 3.5;
+            scenesRate += 8.5;
         if (strcmp(scene, "гололедица") == 0)
-            scenesRate += 4.5;
+            scenesRate += 5.5;
         if (strcmp(scene, "метель") == 0)
             scenesRate += 9.5;
         if (strcmp(scene, "гроза") == 0)
@@ -90,7 +103,7 @@ double calcRate(char *request) {
         return scenesRate;
 
     // Среднее арифметическое рейтингов. Рейтинг дня
-    rate += (fabs(tempRate) + precipitationRate + windRate + fabs(pressureRate) + scenesRate) / 5;
+    rate += (fabs(tempRate) + precipitationRate + windRate + fabs(pressureRate) + scenesRate) / 5.0;
 
     if (strcmp(request, "Рейтинг дня") == 0)
         return rate;

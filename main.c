@@ -46,6 +46,26 @@
 #include "dataParser.h"
 #include "sentenceHandler.h"
 
+/*int tempFoo() {
+    if (зима) {
+        if (difference > 7) {
+            жарко
+        } else {
+            if (difference < -7) {
+                холодно
+            } else {
+                нормально
+            }
+        }
+    }
+    return group;
+}
+
+int pressureFoo() {
+    if (difference > 12) ...
+    return group;
+}*/
+
 int main() {
     SetConsoleCP(CP_UTF8);
     SetConsoleOutputCP(CP_UTF8);
@@ -70,11 +90,24 @@ int main() {
     //ALL THE MAGIC HAPPENS HERE
     while (!feof(data) && fgets(currentString, STRING_SIZE, data)) {
         dataParse(currentString);
-        generateSentence("Температура", 0);    // Вызов генератора для теста
-        generateSentence("Ветер", 0);
-        generateSentence("Осадки", 0);
+        //generateSentence("Температура", 0);    // Вызов генератора для теста
+        //generateSentence("Ветер", 0);
+        //generateSentence("Осадки", 0);
+
+        //void (*msg) (char*, int);
+        //msg = generateSentence;
+        //msg("Ветер", 0);
+
+        calcRate("");
         printf("\n");
         //calcRate("");
+
+        // Определяем уровень разных категорий разными функциями
+        // Массив ссылок на функции
+        // Ещё сортировка категорий в зависимости от важности
+
+        // Апрель-сентябрь - летние
+        // Октябрь-март - зимние
 
         // Вывод UTF-блевотины
         /*char* alphabet = "АБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдежзийклмнопрстуфхцчшщъыьэюя";
@@ -83,6 +116,17 @@ int main() {
         }*/
         //printf("%lf\n", calcRate("Ветер"));
     }
+    /*
+     *
+     * 31.01.2021
+     * - Вступительное предложение
+     * - Текст
+     *
+     * 01.02.2021
+     * - Вступление предложение
+     * - Текст
+     *
+     */
 
     //closing forecast data file
     fclose(data);
