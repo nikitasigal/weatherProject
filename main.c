@@ -70,10 +70,11 @@ int main() {
     //ALL THE MAGIC HAPPENS HERE
     while (!feof(data) && fgets(currentString, STRING_SIZE, data)) {
         dataParse(currentString);
-        generateSentence("Температура", 2);    // Вызов генератора для тестаВ
-        //generator("Температура", 1);    // Вызов генератора для тестаВ
-        calcRate("");
-        generateSentence("Температура", 2);
+        generateSentence("Температура", 0);    // Вызов генератора для теста
+        generateSentence("Ветер", 0);
+        generateSentence("Осадки", 0);
+        printf("\n");
+        //calcRate("");
 
         // Вывод UTF-блевотины
         /*char* alphabet = "АБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдежзийклмнопрстуфхцчшщъыьэюя";

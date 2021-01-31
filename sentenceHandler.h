@@ -3,7 +3,8 @@
 
 double calcRate(char *request);
 
-void calcPercent(const char *request, int trigger);
+void calcPercent(const char *curTemplate, int *i);
+
 
 void generateSentence(char *cat, int level);
 

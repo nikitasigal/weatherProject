@@ -34,16 +34,16 @@ double calcRate(char *request) {
 
     // Подсчёт рейтинга по осадкам
     double precipitationRate = 0;
-    char prec[STRING_SIZE];
+    char precipitation[STRING_SIZE];
     for (int i = 0; i < curDayStr[0].size; ++i) {
-        strcpy(prec, curDayStr[0].word[0]);
-        if (strcmp(prec, "снег") == 0)
+        strcpy(precipitation, curDayStr[0].word[0]);
+        if (strcmp(precipitation, "снег") == 0)
             precipitationRate += 5;
-        if (strcmp(prec, "дождь") == 0)
+        if (strcmp(precipitation, "дождь") == 0)
             precipitationRate += 5.5;
-        if (strcmp(prec, "град") == 0)
+        if (strcmp(precipitation, "град") == 0)
             precipitationRate += 9.5;
-        if (strcmp(prec, "кислотныйдождь") == 0)
+        if (strcmp(precipitation, "кислотныйдождь") == 0)
             precipitationRate += 300;
     }
 
@@ -111,7 +111,24 @@ double calcRate(char *request) {
  * Потом по второму аргументу (номер группы) выбирается рандомный синоним из этой группы.
  * По третьему (род) и четвёртому (падеж) аргументу выбирается окончание в соответствии с правилом русского языка
  */
-void calcPercent(const char *request, int trigger) {    // Функция для %ABCD. Для удобства заносим параметры (ABCD) в отдельные переменные
+void calcPercent(const char *curTemplate, int *i) {    // Функция для %ABCD. Для удобства заносим параметры (ABCD) в отдельные переменные
+    int trigger = 0;                            // Триггер для капитализации буквы в начале предложения
+    if (*i == 0 || curTemplate[*i - 2] == '.')    // Если это начало предложения, то пишем его с большой буквы (ставим 'триггер' для этого)
+        trigger = 1;                            // trigger = 1, значит надо капитализировать
+
+    ++*i;                                        // Переходим к параметрам %
+    char request[4];                            // Массив для хранения четырёх параметров %
+    for (int j = 0; j < 4; ++j)                 // Заносим в массив
+        request[j] = curTemplate[*i + j];
+
+    *i += 3;
+    // Предобработка %.... $..
+    if (request[0] == 'A' && curTemplate[*i + 2] == '$' && curTemplate[*i + 3] == 'A' &&   // Длинное условие для обработки случая: жаркие 5 градусов / жаркий 1 градус
+        abs(curDayNums[curTemplate[*i + 4] - 'A']) != 1) {       // Условие: если дальше идёт $ и в нём запрашивается число, отличное от 1,..
+        // ..то выдаём абстрактное слово во множественном числе
+        request[2] = 'D';
+    }
+
     int partOfSpeech = request[0] - 'A';                // Часть речи
     int groupID = request[1] - 'A';                     // Группа
     int wordGenus = request[2] - 'A';                   // Род
@@ -185,6 +202,72 @@ void calcPercent(const char *request, int trigger) {    // Функция для
         printf("%s", AdjEndings[endingCategory * 4 + wordGenus][wordCase]);
 }
 
+void calcDollar(const char *curTemplate, int *lastNum, int *i) {
+    ++(*i);                                                  // Смотрим первый символ в записи $
+    switch (curTemplate[(*i)]) {                             // Если этот первый символ...
+        case 'A': {                                          // ..'A', то нужно вставить число из массива curDayNums (массив с данными дня)
+            ++(*i);                                          // Смотрим следующий символ в записи $. Он означает, какое число из массива нужно взять
+            (*lastNum) = curDayNums[curTemplate[(*i)] - 'A']; // Берём число из массива
+            printf("%d", (*lastNum));                // Выводим то, что просили
+            (*lastNum) %= 100;                             // Запоминаем последние две цифры числа. Это нужно для склонения последующего слова (например, 11 градусОВ, 2 градусА)
+            (*lastNum) = abs((*lastNum));                     // Нам не нужно запоминать знак числа. Берём по модулю для простоты
+            break;                                      // $ обработан
+        }
+        case 'B': {                     // ..'B', то нужно вставить слово из массива curDayStr (массив с данными дня)
+            // TODO
+            ++(*i);
+            // Капитализация первой буквы
+            for (int j = 0; j < curDayStr[curTemplate[(*i)] - 'A'].size; ++j) {
+                char *first = curDayStr[curTemplate[(*i)] - 'A'].word[j];
+                if (j == 0)
+                    if ((*i) == 0 || curTemplate[(*i) - 4] == '.') {
+                        if (first[0] == -48) {
+                            first[1] = (char) (first[1] - 32);
+                        } else {
+                            first[0] -= 1;
+                            first[1] = (char) (first[1] + 32);
+                        }
+                    }
+
+                if (j == curDayStr[curTemplate[(*i)] - 'A'].size - 1)
+                    printf("%s", curDayStr[curTemplate[(*i)] - 'A'].word[j]);
+                else
+                    printf("%s, ", curDayStr[curTemplate[(*i)] - 'A'].word[j]);
+            }
+            break;
+        }
+        default:
+            printf("Error");    // Отладка
+    }
+}
+
+
+void calcAsterisk(int lastNum, const char *curTemplate, int *i) {
+    int category = 0;                       // Категория слова в соотвествии с правилом русского языка
+    ++(*i);                                    // Смотрим, какого падежа требуется слово
+// Особый случай для чисел с окончанием на 11-14
+    if (lastNum >= 11 && lastNum <= 14) {   // Если число оканчивается на 11-14, то окончание -ов (11 градусов)
+        printf("ов");
+    } else {
+        switch (lastNum % 10) {             // В зависимости от последней цифры меняется окончание следующего слова
+            case 1:                         // Нулевое окончание (1 градус)
+                break;
+            case 2:
+            case 3:
+            case 4:
+                category = 1;               // Группа окончаний для цифр 2, 3, 4
+                break;
+            default:
+                category = 2;               // В любом другом случае
+                break;
+        }
+        int caseWord = curTemplate[*i] - 'A';                                        // Получение номера падежа
+        if (!(category == 0 && (caseWord == 0 || caseWord == 3)))                   // Нуууу, выбор окончания..
+            printf("%s", NounEndings[category][curTemplate[*i] - 'A']);  // Берём окончание из словаря
+    }
+}
+
+
 /*
  * Функция генератора. Принимает два параметра: категория (Температура, Ветер и т.п.) и уровень (0, 1, 2..).
  * Пример вызова функции: generateSentence ("Температура", 0); Сначала берёт рандомный темплейт и обрабатывает его посимвольно.
@@ -192,103 +275,37 @@ void calcPercent(const char *request, int trigger) {    // Функция для
  * то обрабатываем его (подробнее об обработке см. в функции).
  */
 void generateSentence(char *ctg, int level) {
-    int randomTemplate = rand() % Temperature.group[level].size;    // Random selection of template
+    TEMP_CATEGORY parameter;                //Current weather category
+    if (strcmp(ctg, "Температура") == 0)
+        parameter = Temperature;
+    if (strcmp(ctg, "Ветер") == 0)
+        parameter = Wind;
+    if (strcmp(ctg, "Давление") == 0)
+        parameter = Pressure;
+    if (strcmp(ctg, "Осадки") == 0)
+        parameter = Precipitation;
+    if (strcmp(ctg, "Явления") == 0)
+        parameter = Events;
+
+    int randomTemplate = rand() % parameter.group[level].size;    // Random selection of template
     //randomTemplate = (randomTemplate + 1) % Temperature.group[level].size;  // DEBUG
     //printf("%d) ", randomTemplate + 1);                              // DEBUG
     int lastNum = 0;    // Last inserted numerical value. Used in *function to connect nouns with their respected values
 
-    TEMP_CATEGORY parameter;                //Current weather category
-    if (strcmp(ctg, "Температура") == 0)
-        parameter = Temperature;
+
     char *curTemplate = parameter.group[level].tmp[randomTemplate]; // Рандомный выбор темплейта из нужной группы
     for (int i = 0; i < strlen(curTemplate); ++i) {                 // Идём по строке. Анализируем посимвольно
         switch (curTemplate[i]) {                                   // Если текущий символ темплейта...
             case '$': {                                             // ..служебный символ для подстановки числа/слова в текст (формата $AB)
-                ++i;                                                // Смотрим первый символ в записи $
-                switch (curTemplate[i]) {                           // Если этот первый символ...
-                    case 'A': {                                     // ..'A', то нужно вставить число из массива curDayNums (массив с данными дня)
-                        ++i;                                        // Смотрим следующий символ в записи $. Он означает, какое число из массива нужно взять
-                        lastNum = curDayNums[curTemplate[i] - 'A']; // Берём число из массива
-                        printf("%d", lastNum);             // Выводим то, что просили
-                        lastNum %= 100;                             // Запоминаем последние две цифры числа. Это нужно для склонения последующего слова (например, 11 градусОВ, 2 градусА)
-                        lastNum = abs(lastNum);                     // Нам не нужно запоминать знак числа. Берём по модулю для простоты
-                        break;                                      // $ обработан
-                    }
-                    case 'B': {                     // ..'B', то нужно вставить слово из массива curDayStr (массив с данными дня)
-                        // TODO
-                        ++i;
-                        // Капитализация первой буквы
-                        for (int j = 0; j < curDayStr[curTemplate[i] - 'A'].size; ++j) {
-                            char *first = curDayStr[curTemplate[i] - 'A'].word[j];
-                            if (j == 0)
-                                if (i == 0 || curTemplate[i - 4] == '.') {
-                                    if (first[0] == -48) {
-                                        first[1] = (char) (first[1] - 32);
-                                    } else {
-                                        first[0] -= 1;
-                                        first[1] = (char) (first[1] + 32);
-                                    }
-                                }
-
-                            if (j == curDayStr[curTemplate[i] - 'A'].size - 1)
-                                printf("%s", curDayStr[curTemplate[i] - 'A'].word[j]);
-                            else
-                                printf("%s, ", curDayStr[curTemplate[i] - 'A'].word[j]);
-                        }
-                        break;
-                    }
-                    default:
-                        printf("Error");    // Отладка
-                }
-
+                calcDollar(curTemplate, &lastNum, &i);
                 break;
             }
             case '%': {                                     // ..служебный символ для подстановки абстрактного слова (формат %ABCD)
-                int trigger = 0;                            // Триггер для капитализации буквы в начале предложения
-                if (i == 0 || curTemplate[i - 2] == '.')    // Если это начало предложения, то пишем его с большой буквы (ставим 'триггер' для этого)
-                    trigger = 1;                            // trigger = 1, значит надо капитализировать
-
-                ++i;                                        // Переходим к параметрам %
-                char request[4];                            // Массив для хранения четырёх параметров %
-                for (int j = 0; j < 4; ++j)                 // Заносим в массив
-                    request[j] = curTemplate[i + j];
-                i += 3;
-
-                // Предобработка %.... $..
-                if (curTemplate[i + 2] == '$' && curTemplate[i + 3] == 'A' &&   // Длинное условие для обработки случая: жаркие 5 градусов / жаркий 1 градус
-                    abs(curDayNums[curTemplate[i + 4] - 'A']) != 1) {       // Условие: если дальше идёт $ и в нём запрашивается число, отличное от 1,..
-                    // ..то выдаём абстрактное слово во множественном числе
-                    request[2] = 'D';
-                }
-
-                calcPercent(request, trigger);                   // Вызываем запрос абстрактного слова. Функция нужна для удобства, её часто придётся изменять
-
+                calcPercent(curTemplate, &i);                   // Вызываем запрос абстрактного слова. Функция нужна для удобства, её часто придётся изменять
                 break;
             }
             case '*': {                                 // ..служебный символ для подстановки абстрактного слова (формат *A)
-                int category = 0;                       // Категория слова в соотвествии с правилом русского языка
-                ++i;                                    // Смотрим, какого падежа требуется слово
-                // Особый случай для чисел с окончанием на 11-14
-                if (lastNum >= 11 && lastNum <= 14) {   // Если число оканчивается на 11-14, то окончание -ов (11 градусов)
-                    printf("ов");
-                } else {
-                    switch (lastNum % 10) {             // В зависимости от последней цифры меняется окончание следующего слова
-                        case 1:                         // Нулевое окончание (1 градус)
-                            break;
-                        case 2:
-                        case 3:
-                        case 4:
-                            category = 1;               // Группа окончаний для цифр 2, 3, 4
-                            break;
-                        default:
-                            category = 2;               // В любом другом случае
-                            break;
-                    }
-                    int caseWord = curTemplate[i] - 'A';                                        // Получение номера падежа
-                    if (!(category == 0 && (caseWord == 0 || caseWord == 3)))                   // Нуууу, выбор окончания..
-                        printf("%s", NounEndings[category][curTemplate[i] - 'A']);  // Берём окончание из словаря
-                }
-
+                calcAsterisk(lastNum, curTemplate, &i);
                 break;
             }
             default:                                    // Не служебный символ. Выводим
