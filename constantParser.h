@@ -5,7 +5,7 @@
 
 //template categories
 #define TEMP_CATEGORY_SIZE 20
-#define TEMP_GROUP_SIZE 10
+#define TEMP_GROUP_SIZE 20
 typedef struct TemplateGroup {
     int size;
     char tmp[TEMP_GROUP_SIZE][STRING_SIZE];
