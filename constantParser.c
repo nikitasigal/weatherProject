@@ -50,7 +50,7 @@ void dictionaryParse(DICTIONARY *dic, const char filename[STRING_SIZE]) {
 void constantParse() {
     //wind force scale
     //it is not possible to initialize global variables in the .h files
-    //as a result, it will be initialized multiple times in different .c files and will cause conflicts
+    //as a result, it will be initialized multiple times in different .c files and will cause conflicts.
     StatWindScale[0] = 0;
     StatWindScale[1] = 5.4;
     StatWindScale[2] = 10.5;
