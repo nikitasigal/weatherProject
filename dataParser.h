@@ -3,7 +3,6 @@
 
 #include "sharedConstants.h"
 
-
 typedef struct {
     int day, month, year;
 } Date;
@@ -16,14 +15,6 @@ typedef struct {
 int curDayNums[NUMS_COUNT];                               // 11 чисел из файла
 Strings curDayStr[CATEGORIES_COUNT];
 Date curDate;                                            // curDate.day / curDate.month / curDate.year
-
-
-int prevDayNums[NUMS_COUNT];
-Strings prevDayStr[CATEGORIES_COUNT];
-Date prevDate;
-
-
-int countDays;  // Количество дней
 
 void dataParse(const char *currentString);
 

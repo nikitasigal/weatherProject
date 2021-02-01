@@ -47,110 +47,53 @@
 #include "evaluateLevels.h"
 
 int main() {
-    test = fopen("test.txt", "w");
-
+    //set encoding for console
     SetConsoleCP(CP_UTF8);
     SetConsoleOutputCP(CP_UTF8);
 
-    //random generateNumerical
+    //random generateSimple
     srand(time(NULL));
 
     //global files parse
     constantParse();
 
-    //opening forecast data file
-    FILE *data = fopen("Forecast Data/data.txt", "r");
-    if (data == NULL) {
-        printf("Error: file was not opened.");
+    //opening forecast dataFile file and output file
+    FILE *dataFile = fopen("Forecast Data/data.txt", "r");
+    FILE *outputFile = fopen("Forecast Data/output.txt", "w");
+    if (dataFile == NULL) {
+        printf("Error: forecast data file was not opened.");
+        return 0;
+    }
+    if (outputFile == NULL) {
+        printf("Error: output file was not opened.");
         return 0;
     }
 
-    char currentString[STRING_SIZE] = { 0 }; // I think everyone knows what is this for
-    fgets(currentString, STRING_SIZE, data); // skipping the first lines with table headings
-
+    char currentString[STRING_SIZE] = {0}; // I think everyone knows what is this for
+    fgets(currentString, STRING_SIZE, dataFile); // skipping the first lines with table headings
 
     //THE MAIN PROGRAM CYCLE
     //ALL THE MAGIC HAPPENS HERE
-    while (!feof(data) && fgets(currentString, STRING_SIZE, data)) {
+    while (!feof(dataFile) && fgets(currentString, STRING_SIZE, dataFile)) {
         dataParse(currentString);
-        fprintf(test, "%d.%d.%d\n", curDate.day, curDate.month, curDate.year);
+        fprintf(outputFile, "%s\n", curDayStr[3].word[0]);
 
         sortCategories();
 
-        generateNumerical(5);
+        generateSimple(outputFile, 5);
         for (int i = 0; i < 5; ++i) {
             if (Order[i].ctg == 1 || Order[i].ctg == 4)
-                generateText(Order[i].ctg);
+                generateComplex(outputFile, Order[i].ctg);
             else
-                generateNumerical(Order[i].ctg);
+                generateSimple(outputFile, Order[i].ctg);
         }
 
-        fprintf(test, "\n\n");
-
-        //void (*msg) (char*, int);
-        //msg = generateNumerical;
-        //msg("Ветер", 0);
-
-
-        // Определяем уровень разных категорий разными функциями
-        // Массив ссылок на функции
-        // Ещё сортировка категорий в зависимости от важности
-
-        // Апрель-сентябрь - летние
-        // Октябрь-март - зимние
-
-        // Вывод UTF-блевотины
-        /*char* alphabet = "АБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдежзийклмнопрстуфхцчшщъыьэюя";
-        for (int i = 0; i < strlen(alphabet); i += 2) {
-            printf("%c%c - %d, %d\n", alphabet[i], alphabet[i + 1], (int) (alphabet[i]), (int) (alphabet[i + 1]));
-        }*/
-        //printf("%lf\n", calcRating("Ветер"));
+        fprintf(outputFile, "\n\n");
     }
-    /*
-     *
-     * 31.01.2021
-     * - Вступительное предложение
-     * - Текст
-     *
-     * 01.02.2021
-     * - Вступление предложение
-     * - Текст
-     *
-     */
 
-    //closing forecast data file
-    fclose(data);
-    fclose(test);
-
-
-
-    //DEBUG for constantParse
-    //printf("%s", Temperature.group[5].tmp[4]);
-
-    // DEBUG for dataParse
-    /*printf("%d %d %d | %d %d | %d %d | %d %d | %s | %d %d | ", prevDate.day, prevDate.month, prevDate.year, prevDayNums[0],
-           prevDayNums[1], prevDayNums[2], prevDayNums[3], prevDayNums[4], prevDayNums[5], prevDayStr[0][0], prevDayNums[6], prevDayNums[7]);
-    for (int i = 0; i < prevCountDirections; ++i) {
-        printf("%s ", prevDayStr[1][i]);
-    }
-    printf("| ");
-    printf("%d %d | %d | ", prevDayNums[8], prevDayNums[9], prevDayNums[10]);
-    for (int i = 0; i < prevCountScenes; ++i) {
-        printf("%s ", prevDayStr[2][i]);
-    }
-    printf("\n\n");*/
-
-    /*printf("%d %d %d | %d %d | %d %d | %d %d | %s | %d %d | ", curDate.day, curDate.month, curDate.year, curDayNums[0],
-           curDayNums[1], curDayNums[2], curDayNums[3], curDayNums[4], curDayNums[5], curDayStr[0][0], curDayNums[6], curDayNums[7]);
-    for (int i = 0; i < curCountDirections; ++i) {
-        printf("%s ", curDayStr[1][i]);
-    }
-    printf("| ");
-    printf("%d %d | %d | ", curDayNums[8], curDayNums[9], curDayNums[10]);
-    for (int i = 0; i < curCountScenes; ++i) {
-        printf("%s ", curDayStr[2][i]);
-    }
-    printf("\n\n");*/
+    //closing forecast dataFile file
+    fclose(dataFile);
+    fclose(outputFile);
 
     return 0;
 }

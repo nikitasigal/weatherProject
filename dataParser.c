@@ -4,56 +4,17 @@
 #include "dataParser.h"
 
 void dataParse(const char *currentString) {
-    // Copy curDay struct to prevDay (excepting the first day)
-    if (countDays != 0) {
-        prevDate.year = curDate.year;
-        prevDate.month = curDate.month;
-        prevDate.day = curDate.day;
-
-        prevDayNums[0] = curDayNums[0];
-        prevDayNums[1] = curDayNums[1];
-
-        prevDayNums[2] = curDayNums[2];
-        prevDayNums[3] = curDayNums[3];
-
-        prevDayNums[4] = curDayNums[4];
-        prevDayNums[5] = curDayNums[5];
-
-        for (int i = 0; i < curDayStr[0].size; ++i) {
-            strcpy(prevDayStr[0].word[i], curDayStr[0].word[i]);
-        }
-
-        prevDayNums[6] = curDayNums[6];
-        prevDayNums[7] = curDayNums[7];
-
-        for (int i = 0; i < curDayStr[1].size; ++i) {
-            strcpy(prevDayStr[1].word[i], curDayStr[1].word[i]);
-        }
-
-        prevDayNums[8] = curDayNums[8];
-        prevDayNums[9] = curDayNums[9];
-
-        prevDayNums[10] = curDayNums[10];
-
-        for (int i = 0; i < curDayStr[2].size; ++i) {
-            strcpy(prevDayStr[2].word[i], curDayStr[2].word[i]);
-        }
-
-        strcpy(prevDayStr[3].word[0], curDayStr[3].word[0]);
-
-        prevDayStr[0].size = curDayStr[0].size;
-        prevDayStr[1].size = curDayStr[1].size;
-        prevDayStr[2].size = curDayStr[2].size;
-        prevDayStr[3].size = curDayStr[3].size;
-    }
-
-    char dateTemp[STRING_SIZE], tempNight[STRING_SIZE], tempDay[STRING_SIZE], tempSense[STRING_SIZE], precipitation[STRING_SIZE],
+    char date[STRING_SIZE], tempNight[STRING_SIZE], tempDay[STRING_SIZE], tempSense[STRING_SIZE], precipitation[STRING_SIZE],
             speed[STRING_SIZE], direction[STRING_SIZE], gusts[STRING_SIZE], pressure[STRING_SIZE], scene[STRING_SIZE];
 
-    sscanf(currentString, "%s%s%s%s%s%s%s%s%s%s", dateTemp, tempNight, tempDay, tempSense, precipitation, speed, direction, gusts, pressure, scene);
+    // Считывание строк из таблицы
+    sscanf(currentString, "%s%s%s%s%s%s%s%s%s%s", date, tempNight, tempDay, tempSense, precipitation, speed, direction, gusts, pressure, scene);
 
-    sscanf(dateTemp, "%d.%d.%d", &curDate.day, &curDate.month, &curDate.year);
+    // Обработка даты
+    sscanf(date, "%d.%d.%d", &curDate.day, &curDate.month, &curDate.year);
+    strcpy(curDayStr[3].word[0], date);
 
+    // Обработка температур (ночью - днем - по ощущениям)
     int countTempNight = sscanf(tempNight, "%d..%d", &curDayNums[0], &curDayNums[1]);
     if (countTempNight == 1)    // If there is only one number in column, then maximum = minimum
         curDayNums[1] = curDayNums[0];
@@ -66,25 +27,29 @@ void dataParse(const char *currentString) {
     if (countTempSense == 1)
         curDayNums[5] = curDayNums[4];
 
-    curDayStr[0].size = sscanf(precipitation, "%[^,\n],%[^,\n],%[^,\n],%[^,\n],%[^,\n],%[^,\n]", curDayStr[0].word[0], curDayStr[0].word[1],
-                            curDayStr[0].word[2], curDayStr[0].word[3],
-                            curDayStr[0].word[4], curDayStr[0].word[5]);
+
+    // Обработка осдадков
+    curDayStr[0].size = sscanf(precipitation, "%[^,],%[^,],%[^,],%[^,],%[^,],%[^,]", curDayStr[0].word[0], curDayStr[0].word[1],
+                               curDayStr[0].word[2], curDayStr[0].word[3],
+                               curDayStr[0].word[4], curDayStr[0].word[5]);
     if (strcmp(curDayStr[0].word[0], "нет") == 0)
         curDayStr[0].size = 0;
 
+    // Обработка направлений ветра
     int countSpeed = sscanf(speed, "%d-%d", &curDayNums[6], &curDayNums[7]);
     if (countSpeed == 1)
         curDayNums[7] = curDayNums[6];
 
-    curDayStr[1].size = sscanf(direction, "%[^,\n],%[^,\n],%[^,\n],%[^,\n],%[^,\n],%[^,\n]", curDayStr[1].word[0], curDayStr[1].word[1],
-                                curDayStr[1].word[2], curDayStr[1].word[3], curDayStr[1].word[4], curDayStr[1].word[5]);
+    curDayStr[1].size = sscanf(direction, "%[^,],%[^,],%[^,],%[^,],%[^,],%[^,]", curDayStr[1].word[0], curDayStr[1].word[1],
+                               curDayStr[1].word[2], curDayStr[1].word[3], curDayStr[1].word[4], curDayStr[1].word[5]);
     if (strcmp(curDayStr[1].word[0], "нет") == 0)
         curDayStr[1].size = 0;
+
     // Обработка направлений ветра
     for (int i = 0; i < curDayStr[1].size; ++i) {
-        int first = (int)curDayStr[1].word[i][1];
+        int first = (int) curDayStr[1].word[i][1];
         if (strlen(curDayStr[1].word[i]) == 5) {
-            int second = (int)curDayStr[1].word[i][4];
+            int second = (int) curDayStr[1].word[i][4];
             switch (first) {
                 case -95:
                     strcpy(curDayStr[1].word[i], "северо-");
@@ -126,20 +91,18 @@ void dataParse(const char *currentString) {
         }
     }
 
-    strcpy(curDayStr[3].word[0], gusts);     // Добавление порывов в массив строк
-    curDayStr[3].size = 1;
+    // Обработка порывов ветра
     int countGusts = sscanf(gusts, "%d-%d", &curDayNums[8], &curDayNums[9]);
     if (countGusts == 1)
         curDayNums[9] = curDayNums[8];
 
+    // Обработка давления
     sscanf(pressure, "%d", &curDayNums[10]);
 
-    curDayStr[2].size = sscanf(scene, "%[^,\n],%[^,\n],%[^,\n],%[^,\n],%[^,\n],%[^,\n]", curDayStr[2].word[0], curDayStr[2].word[1],
-                            curDayStr[2].word[2], curDayStr[2].word[3],
-                            curDayStr[2].word[4], curDayStr[2].word[5]);
+    // Обработка явлений
+    curDayStr[2].size = sscanf(scene, "%[^,],%[^,],%[^,],%[^,],%[^,],%[^,]", curDayStr[2].word[0], curDayStr[2].word[1],
+                               curDayStr[2].word[2], curDayStr[2].word[3],
+                               curDayStr[2].word[4], curDayStr[2].word[5]);
     if (strcmp(curDayStr[2].word[0], "нет") == 0)
         curDayStr[2].size = 0;
-
-    // End of parsing and increasing of countDays by one
-    ++countDays;
 }

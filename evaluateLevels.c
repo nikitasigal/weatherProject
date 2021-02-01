@@ -50,11 +50,11 @@ double calcRating(int ctg) {
     for (int i = 0; i < curDayStr[0].size; ++i) {
         strcpy(precipitation, curDayStr[0].word[0]);
         if (strcmp(precipitation, "снег") == 0)
-            precipitationRate += 5;
+            precipitationRate += 4;
         if (strcmp(precipitation, "дождь") == 0)
-            precipitationRate += 8.5;
+            precipitationRate += 8;
         if (strcmp(precipitation, "град") == 0)
-            precipitationRate += 10;
+            precipitationRate += 15;
         if (strcmp(precipitation, "кислотный.дождь") == 0)
             precipitationRate += 300;
     }
@@ -73,8 +73,8 @@ double calcRating(int ctg) {
 
     // Подсчёт рейтинга по давлению
     double pressureRate = 0;
-    double diffPressure = curDayNums[10] - 748;
-    pressureRate += (sqrt((fabs)(diffPressure * diffPressure * diffPressure)) / 14);
+    double diffPressure = curDayNums[10] - StatPressure[curDate.month];
+    pressureRate += sqrt(fabs(diffPressure * diffPressure * diffPressure)) / 14;
 
     if (ctg == 3)
         return pressureRate;
@@ -106,10 +106,6 @@ double calcRating(int ctg) {
 
     if (ctg == 5)
         return rate;
-
-    // DEBUG INFORMATION
-    printf("temp: %.2lf | prec: %.2lf | wind: %.2lf | pressure: %.2lf | scenes: %.2lf | rate: %.2lf\n", tempRate, precipitationRate,
-           windRate, pressureRate, scenesRate, rate);
 
     return -9999;
 }

@@ -3,8 +3,8 @@
 
 #include "constantParser.h"
 
-void generateNumerical(int ctg);
+void generateSimple(FILE *outputFile, int ctg);
 
-void generateText(int ctg);
+void generateComplex(FILE *outputFile, int ctg);
 
 #endif //WEATHERPROJECT_SENTENCEHANDLER_H
