@@ -4,29 +4,31 @@
 #include "sharedConstants.h"
 
 //template categories
-#define CATEGORY_SIZE 10
-#define TEMPGROUP_SIZE 5
+#define TEMP_CATEGORY_SIZE 20
+#define TEMP_GROUP_SIZE 20
 typedef struct TemplateGroup {
     int size;
-    char tmp[TEMPGROUP_SIZE][STRING_SIZE];
+    char tmp[TEMP_GROUP_SIZE][STRING_SIZE];
 } TEMP_GROUP;
-typedef struct Category {
+typedef struct TemplateCategory {
     int size;
-    TEMP_GROUP group[CATEGORY_SIZE];
-} CATEGORY;
-CATEGORY
+    TEMP_GROUP group[TEMP_CATEGORY_SIZE];
+} TEMP_CATEGORY;
+TEMP_CATEGORY
         Temperature,
-        Precipitation,
         Wind,
         Pressure,
-        Phenomenon;
+        Events,
+        TextBeginnings,
+        TextFollowups,
+        BeginSentence;
 
 //synonym dictionaries
-#define DICTIONARY_SIZE 10
-#define SYNGROUP_SIZE 10
-#define END_SIZE 10
+#define DICTIONARY_SIZE 20
+#define SYNGROUP_SIZE 20
+
 typedef struct ComplexWord {
-    char base[WORD_SIZE], end[END_SIZE];
+    char base[WORD_SIZE], end[WORD_SIZE];
 } COMP_WORD;
 typedef struct SynonymGroup {
     int size;
@@ -38,19 +40,19 @@ typedef struct Dictionary {
 } DICTIONARY;
 DICTIONARY
         Adjectives,
-        Adverbs,
-        Nouns;
+        Adverbs;
 
-//endings table
-#define END_ROWS 20
-#define END_COLUMNS 6
-char Endings[END_ROWS][END_COLUMNS][END_SIZE];
-
+//endings tables
+#define ADJ_END_ROWS 20
+#define ADJ_END_COLUMNS 6
+char AdjEndings[ADJ_END_ROWS][ADJ_END_COLUMNS][WORD_SIZE];
+#define NOUN_END_ROWS 3
+#define NOUN_END_COLUMNS 6
+char NounEndings[NOUN_END_ROWS][NOUN_END_COLUMNS][WORD_SIZE];
 
 //simple values
-int AverageTemperature[12], AveragePressure[12];
-double *WindScale;
-
+int StatTemperature[12], StatPressure[12];   //Average statistical temperatures and pressures by month of the year
+double StatWindScale[4];                       //Scale of wind level relative to it's speed
 
 //global parse function
 void constantParse();

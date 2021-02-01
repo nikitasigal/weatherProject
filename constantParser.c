@@ -2,13 +2,14 @@
 #include <stdio.h>
 #include <string.h>
 
-void categoryParse(CATEGORY *ctg, const char filename[STRING_SIZE]) {
+void categoryParse(TEMP_CATEGORY *ctg, const char filename[STRING_SIZE]) {
     FILE *f = fopen(filename, "r");
     int groupID = 0;
     int tmpID = 0;
     char temp[STRING_SIZE];
     while (!feof(f)) {
         fgets(temp, STRING_SIZE, f);
+        temp[strlen(temp) - 1] = 0;
         if (temp[0] == '!') {
             groupID++;
             (*ctg).size++;
@@ -48,32 +49,52 @@ void dictionaryParse(DICTIONARY *dic, const char filename[STRING_SIZE]) {
 
 void constantParse() {
     //wind force scale
-    double windTemp[] = {0, 1.6, 5.5, 10.8, 17.2, 28.5};
-    WindScale = windTemp;
+    //it is not possible to initialize global variables in the .h files
+    //as a result, it will be initialized multiple times in different .c files and will cause conflicts.
+    StatWindScale[0] = 0;
+    StatWindScale[1] = 5.4;
+    StatWindScale[2] = 10.5;
+    StatWindScale[3] = 20.8;
 
-    FILE *f; //universal file variable
+    FILE *f;  //universal file variable
 
     //average temperature and pressure by month of the year
-    f = fopen("Constants/averages.txt", "r");
+    f = fopen("Constants/statistics.txt", "r");
     for (int i = 0; i < 12; ++i) {
-        fscanf(f, "%d%d", &(AverageTemperature[i]), &(AveragePressure[i]));
+        fscanf(f, "%d%d", &(StatTemperature[i]), &(StatPressure[i]));
     }
     fclose(f);
 
-    //endings table
-    f = fopen("Constants/endings.txt", "r");
-    for (int i = 0; i < END_ROWS; ++i) {
-        for (int j = 0; j < END_COLUMNS; ++j) {
-            fscanf(f, "%s", Endings[i][j]);
+    //table of adjectives' endings used in %function
+    f = fopen("Constants/adjectives_endings.txt", "r");
+    for (int i = 0; i < ADJ_END_ROWS; ++i) {
+        for (int j = 0; j < ADJ_END_COLUMNS; ++j) {
+            fscanf(f, "%s", AdjEndings[i][j]);
         }
     }
     fclose(f);
 
-    //dictionaries parse
+    //table of nouns' endings used in *function
+    f = fopen("Constants/nouns_endings.txt", "r");
+    for (int i = 0; i < NOUN_END_ROWS; ++i) {
+        for (int j = 0; j < NOUN_END_COLUMNS; ++j) {
+            fscanf(f, "%s", NounEndings[i][j]);
+        }
+    }
+    fclose(f);
+
+    //extracting dictionaries
     dictionaryParse(&Adjectives, "Dictionaries/adjectives.txt");
     dictionaryParse(&Adverbs, "Dictionaries/adverbs.txt");
-    dictionaryParse(&Nouns, "Dictionaries/nouns.txt");
 
-    //categories parse
+    //extracting weather template categories
     categoryParse(&Temperature, "Templates/temperature.txt");
+    categoryParse(&Wind, "Templates/wind.txt");
+    categoryParse(&Pressure, "Templates/pressure.txt");
+    categoryParse(&Events, "Templates/events.txt");
+    categoryParse(&BeginSentence, "Templates/beginSentence.txt");
+
+    //extracting components of complex text templates
+    categoryParse(&TextBeginnings, "Templates/Text Complex Parts/beginnings.txt");
+    categoryParse(&TextFollowups, "Templates/Text Complex Parts/followups.txt");
 }
