@@ -57,8 +57,14 @@ int main() {
     //global files parse
     constantParse();
 
+    char filename[STRING_SIZE] = {0};
+    printf("Enter forecast data file name: ");
+    scanf("%s", filename);
+    char dataFilename[] = "Forecast Data/";
+    strcat(dataFilename, filename);
+
     //opening forecast dataFile file and output file
-    FILE *dataFile = fopen("Forecast Data/data.txt", "r");
+    FILE *dataFile = fopen(dataFilename, "r");
     FILE *outputFile = fopen("Forecast Data/output.txt", "w");
     if (dataFile == NULL) {
         printf("Error: forecast data file was not opened.");
@@ -76,7 +82,8 @@ int main() {
     //ALL THE MAGIC HAPPENS HERE
     while (!feof(dataFile) && fgets(currentString, STRING_SIZE, dataFile)) {
         dataParse(currentString);
-        fprintf(outputFile, "%s\n", curDayStr[3].word[0]);
+        fprintf(outputFile, "%s - ", curDayStr[3].word[0]);
+        printWeekDay(outputFile);
 
         sortCategories();
 

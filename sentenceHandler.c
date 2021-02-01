@@ -6,6 +6,7 @@
 #include "dataParser.h"
 #include "evaluateLevels.h"
 
+char WeekDays[7][STRING_SIZE] = {"Воскресенье", "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота"};
 
 /*
  * Следующая функция calcPercent используется для обработки служебного символа % (например, %ABCD). Она используется в
@@ -263,4 +264,11 @@ void generateComplex(FILE *outputFile, int ctg) {
         int endIndex = rand() % Events.group[eventIndex].size;
         fprintf(outputFile, "%s ", Events.group[eventIndex].tmp[endIndex]);
     }
+}
+
+void printWeekDay(FILE *outputFile) {
+    int temp = (14 - curDate.month) / 12;
+    int year = curDate.year - temp;
+    int month = curDate.month + 12 * temp - 2;
+    fprintf(outputFile, "%s\n", WeekDays[(curDate.day + (31 * month) / 12 + year + year / 4 - year / 100 + year / 400) % 7]);
 }
