@@ -1,6 +1,4 @@
 #include <string.h>
-#include <stdlib.h>
-#include <string.h>
 #include <stdio.h>
 #include <math.h>
 
@@ -54,9 +52,9 @@ double calcRating(int ctg) {
         if (strcmp(precipitation, "снег") == 0)
             precipitationRate += 5;
         if (strcmp(precipitation, "дождь") == 0)
-            precipitationRate += 6.5;
+            precipitationRate += 8.5;
         if (strcmp(precipitation, "град") == 0)
-            precipitationRate += 9.5;
+            precipitationRate += 10;
         if (strcmp(precipitation, "кислотный.дождь") == 0)
             precipitationRate += 300;
     }
@@ -93,9 +91,9 @@ double calcRating(int ctg) {
         if (strcmp(scene, "гололедица") == 0)
             scenesRate += 5.5;
         if (strcmp(scene, "метель") == 0)
-            scenesRate += 9.5;
+            scenesRate += 12;
         if (strcmp(scene, "гроза") == 0)
-            scenesRate += 15;
+            scenesRate += 25;
         if (strcmp(scene, "конец.света") == 0)
             scenesRate += 300;
     }
@@ -165,7 +163,6 @@ int getTemperatureLevel() {
 int getWindLevel() {
     double averageWind = ((curDayNums[6] + curDayNums[7]) + ((curDayNums[8] + curDayNums[9]) * 0.6)) / 4.0;
     for (int i = 1; i < 4; ++i) {
-        int windScale = StatWindScale[i];
         if (averageWind < StatWindScale[i]) {
             return 4 - i;
         }
@@ -197,13 +194,17 @@ int getPrecipitationOrEventGroup(const char *request) {
 
 int getDayLevel() {
     double currentDayRating = calcRating(5);
-    if (currentDayRating < 2.5) {
+    if (currentDayRating < 2) {
         return 0;
     } else {
-        if (currentDayRating < 5) {
+        if (currentDayRating < 4) {
             return 1;
         } else {
-            return 2;
+            if (currentDayRating < 6) {
+                return 2;
+            } else {
+                return 3;
+            }
         }
     }
 }

@@ -42,7 +42,7 @@
 #include <stdio.h>
 FILE* test;
 //string and word sizes for char arrays
-#define WORD_SIZE 40 //!!!
+#define WORD_SIZE 40
 #define STRING_SIZE 300
 
 //constants from dataParser

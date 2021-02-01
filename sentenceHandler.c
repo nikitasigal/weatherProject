@@ -3,7 +3,6 @@
 #include <stdio.h>
 
 #include "sentenceHandler.h"
-#include "constantParser.h"
 #include "dataParser.h"
 #include "evaluateLevels.h"
 
@@ -108,6 +107,9 @@ void calcPercent(const char *curTemplate, int *i) {    // Функция для 
         fprintf(test, "%s", AdjEndings[endingCategory * 4 + wordGenus][wordCase]);
 }
 
+/*
+ * Обработчик служебного символа $
+ */
 void calcDollar(const char *curTemplate, int *lastNum, int *i) {
     ++(*i);                                                  // Смотрим первый символ в записи $
     switch (curTemplate[(*i)]) {                             // Если этот первый символ...
@@ -120,7 +122,6 @@ void calcDollar(const char *curTemplate, int *lastNum, int *i) {
             break;                                      // $ обработан
         }
         case 'B': {                     // ..'B', то нужно вставить слово из массива curDayStr (массив с данными дня)
-            // TODO
             ++(*i);
             // Капитализация первой буквы
             for (int j = 0; j < curDayStr[curTemplate[(*i)] - 'A'].size; ++j) {
@@ -150,7 +151,7 @@ void calcDollar(const char *curTemplate, int *lastNum, int *i) {
 void calcAsterisk(int lastNum, const char *curTemplate, int *i) {
     int category = 0;                       // Категория слова в соотвествии с правилом русского языка
     ++(*i);                                    // Смотрим, какого падежа требуется слово
-// Особый случай для чисел с окончанием на 11-14
+    // Особый случай для чисел с окончанием на 11-14
     if (lastNum >= 11 && lastNum <= 14) {   // Если число оканчивается на 11-14, то окончание -ов (11 градусов)
         fprintf(test, "ов");
     } else {
@@ -173,8 +174,7 @@ void calcAsterisk(int lastNum, const char *curTemplate, int *i) {
 }
 
 /*
- * Функция генератора. Принимает два параметра: категория (Температура, Ветер и т.п.) и уровень (0, 1, 2..).
- * Пример вызова функции: generateNumerical ("Температура", 0); Сначала берёт рандомный темплейт и обрабатывает его посимвольно.
+ * Функция генератора темплейтов. Принимает один аргумент - категорию. Сначала берёт рандомный темплейт и обрабатывает его посимвольно.
  * Если текущий символ просто буква, число или знак препинания, то печатаем. Если встретили один из служебных символов (%, $, *),
  * то обрабатываем его (подробнее об обработке см. в функции).
  */
@@ -225,6 +225,9 @@ void generateNumerical(int ctg) {
     fprintf(test, " ");
 }
 
+/*
+ * Функция генерации текста по частям. Принимает один аргумент - категорию.
+ */
 void generateText(int ctg) {
     int strArg;
     if (ctg == 1)

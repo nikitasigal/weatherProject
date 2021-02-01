@@ -51,40 +51,30 @@ void dataParse(const char *currentString) {
             speed[STRING_SIZE], direction[STRING_SIZE], gusts[STRING_SIZE], pressure[STRING_SIZE], scene[STRING_SIZE];
 
     sscanf(currentString, "%s%s%s%s%s%s%s%s%s%s", dateTemp, tempNight, tempDay, tempSense, precipitation, speed, direction, gusts, pressure, scene);
-    //printf("%s %s %s %s %s %s %s %s %s %s\n", dateTemp, tempNight, tempDay, tempSense, precipitation, speed, direction, gusts, pressure, scene);
 
     sscanf(dateTemp, "%d.%d.%d", &curDate.day, &curDate.month, &curDate.year);
-    //printf("%d %d %d\n", curDate.day, curDate.month, curDate.year);
 
     int countTempNight = sscanf(tempNight, "%d..%d", &curDayNums[0], &curDayNums[1]);
     if (countTempNight == 1)    // If there is only one number in column, then maximum = minimum
         curDayNums[1] = curDayNums[0];
-    //printf("%d  %d\n", curDayNums[0], curDayNums[1]);
 
     int countTempDay = sscanf(tempDay, "%d..%d", &curDayNums[2], &curDayNums[3]);
     if (countTempDay == 1)
         curDayNums[3] = curDayNums[2];
-    //printf("%d  %d\n", curDayNums[2], curDayNums[3]);
 
     int countTempSense = sscanf(tempSense, "%d..%d", &curDayNums[4], &curDayNums[5]);
     if (countTempSense == 1)
         curDayNums[5] = curDayNums[4];
-    //printf("%d  %d\n", curDayNums[4], curDayNums[5]);
 
     curDayStr[0].size = sscanf(precipitation, "%[^,\n],%[^,\n],%[^,\n],%[^,\n],%[^,\n],%[^,\n]", curDayStr[0].word[0], curDayStr[0].word[1],
                             curDayStr[0].word[2], curDayStr[0].word[3],
                             curDayStr[0].word[4], curDayStr[0].word[5]);
     if (strcmp(curDayStr[0].word[0], "нет") == 0)
         curDayStr[0].size = 0;
-    /*for (int i = 0; i < curDayStr[0].size; ++i) {
-        printf("%s ", curDayStr[0][i]);
-    }
-    printf("\n");*/
 
     int countSpeed = sscanf(speed, "%d-%d", &curDayNums[6], &curDayNums[7]);
     if (countSpeed == 1)
         curDayNums[7] = curDayNums[6];
-    //printf("%d  %d\n", curDayNums[6], curDayNums[7]);
 
     curDayStr[1].size = sscanf(direction, "%[^,\n],%[^,\n],%[^,\n],%[^,\n],%[^,\n],%[^,\n]", curDayStr[1].word[0], curDayStr[1].word[1],
                                 curDayStr[1].word[2], curDayStr[1].word[3], curDayStr[1].word[4], curDayStr[1].word[5]);
@@ -135,31 +125,20 @@ void dataParse(const char *currentString) {
             }
         }
     }
-    /*for (int i = 0; i < curDayStr[1].size; ++i) {
-        printf("%s ", curDayStr[1].word[i]);
-    }
-    printf("\n");*/
 
     strcpy(curDayStr[3].word[0], gusts);     // Добавление порывов в массив строк
     curDayStr[3].size = 1;
     int countGusts = sscanf(gusts, "%d-%d", &curDayNums[8], &curDayNums[9]);
     if (countGusts == 1)
         curDayNums[9] = curDayNums[8];
-    //printf("%d  %d\n", curDayNums[8], curDayNums[9]);
-
 
     sscanf(pressure, "%d", &curDayNums[10]);
-    //printf("%d\n", curDayNums[10]);
 
     curDayStr[2].size = sscanf(scene, "%[^,\n],%[^,\n],%[^,\n],%[^,\n],%[^,\n],%[^,\n]", curDayStr[2].word[0], curDayStr[2].word[1],
                             curDayStr[2].word[2], curDayStr[2].word[3],
                             curDayStr[2].word[4], curDayStr[2].word[5]);
     if (strcmp(curDayStr[2].word[0], "нет") == 0)
         curDayStr[2].size = 0;
-    /*for (int i = 0; i < curDayStr[2].size; ++i) {
-        printf("%s ", curDayStr[2][i]);
-    }
-    printf("\n");*/
 
     // End of parsing and increasing of countDays by one
     ++countDays;

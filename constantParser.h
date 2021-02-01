@@ -23,7 +23,6 @@ TEMP_CATEGORY
         TextFollowups,
         BeginSentence;
 
-
 //synonym dictionaries
 #define DICTIONARY_SIZE 20
 #define SYNGROUP_SIZE 20
@@ -51,11 +50,9 @@ char AdjEndings[ADJ_END_ROWS][ADJ_END_COLUMNS][WORD_SIZE];
 #define NOUN_END_COLUMNS 6
 char NounEndings[NOUN_END_ROWS][NOUN_END_COLUMNS][WORD_SIZE];
 
-
 //simple values
 int StatTemperature[12], StatPressure[12];   //Average statistical temperatures and pressures by month of the year
 double StatWindScale[4];                       //Scale of wind level relative to it's speed
-
 
 //global parse function
 void constantParse();
