@@ -1,7 +1,33 @@
-Хороший день.
-%AAAA день!
+Судя по нашим данным, день должен оказаться %ANAE %AAAE.
+Вас встретит %AAAA день - советуем насладиться этим.
+Сегодня %BIAA %ANAA %AAAA денек. Возможно, именно этого вы и ждали.
+%BJAA %AAAA день. Надейтесь, что он не последний.
 !
-Нормальный день.
+Исходя из прогнозов, в эти сутки погода будет %BCAA %AABE.
+%BCAA %AABA погода %BIAA поможет вам оставаться энергичным в течение всего дня.
+%AABA погода. Не забудьте прогуляться!
+Погода в Нижнем Новгороде, %BIAA, %BCAA %AAAA. Вам повезло, если у вас выходной.
 !
-Быдло-день.
+%BIAA наступление %ABBB погоды.
+%BCAA %ABAA день. Но, при должном усилии, ваши планы будут не сорваны.
+%BDAA %ABBA погода, но не дайте ей сломить ваш дух.
+Если вы не планировали никуда выходить, продолжайте. Погода %ABAA.
+!
+%BGAA %ABBA погода %BCAA испортит все ваши планы на день.
+%BJAA %ABBA погода для тех, кто любит погулять на природе и %APAF воздухе под солнышком.
+День окажется %ABAE, а всё из-за %AMBB и %BDAA %ABBB погоды. Советуем не выходить на улицу.
+%AAAA день для %AADB занятий. Дома.
+Если кто-то говорит вам что сегодня %AAAA погода, можете ему %BKAA врезать.
+!
+Destroy. Them. All.
+RIP and tear until it is done.
+Rise and shine, Mr. Freeman.
+Don't wake up samurai. City is already burnt down.
+It's time to kick ass and chew bubble gum… and I'm all outta gum.
+It's the end of the world, all over again.
+The truth is you lost an expensive piece of army-issue equipment. That suit is going to come out of your pay, and you will remain in this mans army until you are five hundred and ten years old, which is the number of years it will take for you to pay for a Mark II Powered Combat Armor you have lost!
+Wasted.
+Prepare to die.
+You died.
+Это программа сдохни или умри.
 !

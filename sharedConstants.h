@@ -43,7 +43,7 @@
 FILE* test;
 //string and word sizes for char arrays
 #define WORD_SIZE 40
-#define STRING_SIZE 300
+#define STRING_SIZE 350
 
 //constants from dataParser
 #define NUMS_COUNT 11

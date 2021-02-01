@@ -203,7 +203,11 @@ int getDayLevel() {
             if (currentDayRating < 6) {
                 return 2;
             } else {
-                return 3;
+                if (currentDayRating < 400) {
+                    return 3;
+                } else {
+                    return 4;
+                }
             }
         }
     }
