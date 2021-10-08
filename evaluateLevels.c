@@ -1,10 +1,7 @@
 #include <string.h>
-#include <stdio.h>
 #include <math.h>
 
 #include "evaluateLevels.h"
-#include "dataParser.h"
-#include "constantParser.h"
 
 char precipitationsAndEvents[11][STRING_SIZE] = {"дождь", "снег", "кислотный.дождь", "град", "туман", "метель", "гололедица",
                                                  "гроза", "конец.света", "никитаgay", "слякоть"};
@@ -17,14 +14,14 @@ char precipitationsAndEvents[11][STRING_SIZE] = {"дождь", "снег", "ки
  * Предполагается, что норма по параметру ниже 5 единиц (касается как каждого параметра, так и рейтинга дня).
  * Но пока ничего не корректировалось и не тестировалось.
  */
-double calcRating(int ctg) {
+double calcRating(int ctg, Data *data) {
     double rate = 0;
 
     // Подсчёт рейтинга по температуре
-    double diffTemp = ((curDayNums[2] + curDayNums[3] + curDayNums[4] + curDayNums[5]) / 4.0) - StatTemperature[curDate.month - 1];//Отклонение среднедневной температуры от нормы
+    double diffTemp = ((data->curDayNums[2] + data->curDayNums[3] + data->curDayNums[4] + data->curDayNums[5]) / 4.0) - data->StatTemperature[data->curDate.month - 1];//Отклонение среднедневной температуры от нормы
     double tempRate;
 
-    switch (curDate.month) {
+    switch (data->curDate.month) {
         case 10:
         case 11:
         case 12:
@@ -47,8 +44,8 @@ double calcRating(int ctg) {
     // Подсчёт рейтинга по осадкам
     double precipitationRate = 0;
     char precipitation[STRING_SIZE];
-    for (int i = 0; i < curDayStr[0].size; ++i) {
-        strcpy(precipitation, curDayStr[0].word[0]);
+    for (int i = 0; i < data->curDayStr[0].size; ++i) {
+        strcpy(precipitation, data->curDayStr[0].word[0]);
         if (strcmp(precipitation, "снег") == 0)
             precipitationRate += 4;
         if (strcmp(precipitation, "дождь") == 0)
@@ -65,7 +62,7 @@ double calcRating(int ctg) {
     // Подсчёт рейтинга по ветру
     // WARNING!!! Don't use wind-rate for division into levels. Use StatWindScale
     double windRate = 0;
-    double averageWind = ((curDayNums[6] + curDayNums[7]) + ((curDayNums[8] + curDayNums[9]) * 0.6)) / 4.0;
+    double averageWind = ((data->curDayNums[6] + data->curDayNums[7]) + ((data->curDayNums[8] + data->curDayNums[9]) * 0.6)) / 4.0;
     windRate += sqrt((averageWind * averageWind * averageWind) / 10.0);
 
     if (ctg == 2)
@@ -73,7 +70,7 @@ double calcRating(int ctg) {
 
     // Подсчёт рейтинга по давлению
     double pressureRate = 0;
-    double diffPressure = curDayNums[10] - StatPressure[curDate.month];
+    double diffPressure = data->curDayNums[10] - data->StatPressure[data->curDate.month];
     pressureRate += sqrt(fabs(diffPressure * diffPressure * diffPressure)) / 14;
 
     if (ctg == 3)
@@ -81,9 +78,9 @@ double calcRating(int ctg) {
 
     // Подсчёт рейтинга по явлениям
     double scenesRate = 0;
-    for (int i = 0; i < curDayStr[2].size; ++i) {
+    for (int i = 0; i < data->curDayStr[2].size; ++i) {
         char scene[STRING_SIZE];
-        strcpy(scene, curDayStr[2].word[i]);
+        strcpy(scene, data->curDayStr[2].word[i]);
         if (strcmp(scene, "слякоть") == 0)
             scenesRate += 4;
         if (strcmp(scene, "туман") == 0)
@@ -110,30 +107,30 @@ double calcRating(int ctg) {
     return -9999;
 }
 
-void sortCategories() {
+void sortCategories(Data *data) {
     for (int i = 0; i < 5; ++i) {
-        Order[i].ctg = i;
-        Order[i].rating = calcRating(i);
+        data->order[i].ctg = i;
+        data->order[i].rating = calcRating(i, data);
     }
 
     for (int i = 0; i < 5; ++i) {
         for (int j = i + 1; j < 5; ++j) {
-            if (Order[i].rating < Order[j].rating) {
-                double temp = Order[i].ctg;
-                Order[i].ctg = Order[j].ctg;
-                Order[j].ctg = (int) temp;
+            if (data->order[i].rating < data->order[j].rating) {
+                double temp = data->order[i].ctg;
+                data->order[i].ctg = data->order[j].ctg;
+                data->order[j].ctg = (int) temp;
 
-                temp = Order[i].rating;
-                Order[i].rating = Order[j].rating;
-                Order[j].rating = temp;
+                temp = data->order[i].rating;
+                data->order[i].rating = data->order[j].rating;
+                data->order[j].rating = temp;
             }
         }
     }
 }
 
-int getTemperatureLevel() {
-    double averageTemperature = ((curDayNums[2] + curDayNums[3] + curDayNums[4] + curDayNums[5]) / 4.0) - StatTemperature[curDate.month - 1];
-    if (curDate.month >= 4 && curDate.month <= 9) {
+int getTemperatureLevel(Data *data) {
+    double averageTemperature = ((data->curDayNums[2] + data->curDayNums[3] + data->curDayNums[4] + data->curDayNums[5]) / 4.0) - data->StatTemperature[data->curDate.month - 1];
+    if (data->curDate.month >= 4 && data->curDate.month <= 9) {
         if (averageTemperature < -5) {
             return 2;
         } else {
@@ -156,18 +153,18 @@ int getTemperatureLevel() {
     }
 }
 
-int getWindLevel() {
-    double averageWind = ((curDayNums[6] + curDayNums[7]) + ((curDayNums[8] + curDayNums[9]) * 0.6)) / 4.0;
+int getWindLevel(Data *data) {
+    double averageWind = ((data->curDayNums[6] + data->curDayNums[7]) + ((data->curDayNums[8] + data->curDayNums[9]) * 0.6)) / 4.0;
     for (int i = 1; i < 4; ++i) {
-        if (averageWind < StatWindScale[i]) {
+        if (averageWind < data->StatWindScale[i]) {
             return 4 - i;
         }
     }
     return 0;
 }
 
-int getPressureLevel() {
-    int pressureDifference = curDayNums[10] - StatPressure[curDate.month];
+int getPressureLevel(Data *data) {
+    int pressureDifference = data->curDayNums[10] - data->StatPressure[data->curDate.month];
     if (pressureDifference < -12) {
         return 2;
     } else {
@@ -188,8 +185,8 @@ int getPrecipitationOrEventGroup(const char *request) {
     return 0;
 }
 
-int getDayLevel() {
-    double currentDayRating = calcRating(5);
+int getDayLevel(Data *data) {
+    double currentDayRating = calcRating(5, data);
     if (currentDayRating < 2) {
         return 0;
     } else {
