@@ -43,9 +43,25 @@
 #define WORD_SIZE 40
 #define STRING_SIZE 350
 
-//constants from dataParser
+//constants from parsers (input data parser)
 #define NUMS_COUNT 11
 #define WORD_COUNT 100
-#define CATEGORIES_COUNT 4
+#define CATEGORIES_COUNT 5
+
+#define ADJECTIVE 0
+#define ADVERB 1
+
+// UTF-8 feature, the first byte of character is a mark of language
+#define RUSSIAN -48
+
+// Categories
+#define TEMPERATURE 0
+#define PRECIPITATION 1
+#define WIND 2
+#define PRESSURE 3
+#define EVENT 4
+#define RATING 5
+
+#define PRECIPITATION_COUNT 11
 
 #endif //WEATHERPROJECT_SHAREDCONSTANTS_H

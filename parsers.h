@@ -7,33 +7,33 @@
 #define TEMP_CATEGORY_SIZE 20
 #define TEMP_GROUP_SIZE 20
 
-typedef struct TemplateGroup {
+typedef struct {
     int size;
     char tmp[TEMP_GROUP_SIZE][STRING_SIZE];
-} TEMP_GROUP;
+} TemplateGroup;
 
-typedef struct TemplateCategory {
+typedef struct {
     int size;
-    TEMP_GROUP group[TEMP_CATEGORY_SIZE];
-} TEMP_CATEGORY;
+    TemplateGroup group[TEMP_CATEGORY_SIZE];
+} TemplateCategory;
 
 //synonym dictionaries
 #define DICTIONARY_SIZE 20
 #define SYNGROUP_SIZE 20
 
-typedef struct ComplexWord {
+typedef struct {
     char base[WORD_SIZE], end[WORD_SIZE];
-} COMP_WORD;
+} ComplexWord;
 
-typedef struct SynonymGroup {
+typedef struct {
     int size;
-    COMP_WORD syn[SYNGROUP_SIZE];
-} SYN_GROUP;
+    ComplexWord syn[SYNGROUP_SIZE];
+} SynonymGroup;
 
-typedef struct Dictionary {
+typedef struct {
     int size;
-    SYN_GROUP group[DICTIONARY_SIZE];
-} DICTIONARY;
+    SynonymGroup group[DICTIONARY_SIZE];
+} Dictionary;
 
 //endings tables
 #define ADJ_END_ROWS 20
@@ -50,10 +50,10 @@ typedef struct {
     char word[WORD_COUNT][STRING_SIZE];
 } Strings;
 
-typedef struct Connection {
+typedef struct {
     double rating;
     int ctg;
-} CONNECTION;
+} Connection;
 
 typedef struct {
     double StatWindScale[4];
@@ -61,10 +61,10 @@ typedef struct {
     int StatPressure[12];       //Average statistical pressures by month of the year
     char AdjEndings[ADJ_END_ROWS][ADJ_END_COLUMNS][WORD_SIZE];
     char NounEndings[NOUN_END_ROWS][NOUN_END_COLUMNS][WORD_SIZE];
-    DICTIONARY
+    Dictionary
             Adjectives,
             Adverbs;
-    TEMP_CATEGORY
+    TemplateCategory
             Temperature,
             Wind,
             Pressure,
@@ -75,10 +75,10 @@ typedef struct {
 
     // Parsing data
     int curDayNums[NUMS_COUNT];                               // 11 чисел из файла
-    Strings curDayStr[CATEGORIES_COUNT];
+    Strings curDayStr[CATEGORIES_COUNT - 1];
     Date curDate;                                            // curDate.day / curDate.month / curDate.year
 
-    CONNECTION order[5];
+    Connection order[CATEGORIES_COUNT];
 } Data;
 
 //global parse functions

@@ -108,7 +108,7 @@ void inputDataParse(const char *currentString, Data *data) {
 }
 
 
-void categoryParse(TEMP_CATEGORY *ctg, const char filename[STRING_SIZE]) {
+void categoryParse(TemplateCategory *ctg, const char filename[STRING_SIZE]) {
     FILE *f = fopen(filename, "r");
     int groupID = 0;
     int tmpID = 0;
@@ -129,11 +129,11 @@ void categoryParse(TEMP_CATEGORY *ctg, const char filename[STRING_SIZE]) {
     fclose(f);
 }
 
-void dictionaryParse(DICTIONARY *dic, const char filename[STRING_SIZE]) {
+void dictionaryParse(Dictionary *dic, const char filename[STRING_SIZE]) {
     FILE *f = fopen(filename, "r");
     int groupID = 0;
     int synID = 0;
-    char temp[STRING_SIZE];
+    char temp[STRING_SIZE] = {0};
     while (!feof(f)) {
         fgets(temp, STRING_SIZE, f);
         temp[strlen(temp) - 1] = 0;
@@ -155,8 +155,6 @@ void dictionaryParse(DICTIONARY *dic, const char filename[STRING_SIZE]) {
 
 void constantParse(Data *data) {
     //wind force scale
-    //it is not possible to initialize global variables in the .h files
-    //as a result, it will be initialized multiple times in different .c files and will cause conflicts.
     data->StatWindScale[0] = 0;
     data->StatWindScale[1] = 5.4;
     data->StatWindScale[2] = 10.5;

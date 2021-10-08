@@ -69,11 +69,11 @@ int main() {
     FILE *outputFile = fopen("Forecast Data/output.txt", "w");
     if (dataFile == NULL) {
         printf("Error: forecast data file was not opened.");
-        return 0;
+        return EXIT_FAILURE;
     }
     if (outputFile == NULL) {
         printf("Error: output file was not opened.");
-        return 0;
+        return EXIT_FAILURE;
     }
 
     char currentString[STRING_SIZE] = {0}; // I think everyone knows what is this for
@@ -87,10 +87,9 @@ int main() {
         printWeekDay(outputFile, data);
 
         sortCategories(data);
-
-        generateSimple(outputFile, 5, data);
-        for (int i = 0; i < 5; ++i) {
-            if (data->order[i].ctg == 1 || data->order[i].ctg == 4)
+        generateSimple(outputFile, RATING, data);
+        for (int i = 0; i < CATEGORIES_COUNT; ++i) {
+            if (data->order[i].ctg == PRECIPITATION || data->order[i].ctg == EVENT)
                 generateComplex(outputFile, data->order[i].ctg, data);
             else
                 generateSimple(outputFile, data->order[i].ctg, data);
