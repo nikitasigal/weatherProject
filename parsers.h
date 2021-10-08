@@ -1,5 +1,5 @@
-#ifndef WEATHERPROJECT_CONSTANTPARSER_H
-#define WEATHERPROJECT_CONSTANTPARSER_H
+#ifndef WEATHERPROJECT_PARSERS_H
+#define WEATHERPROJECT_PARSERS_H
 
 #include "sharedConstants.h"
 
@@ -41,7 +41,6 @@ typedef struct Dictionary {
 #define NOUN_END_ROWS 3
 #define NOUN_END_COLUMNS 6
 
-// From dataParser.h
 typedef struct {
     int day, month, year;
 } Date;
@@ -51,7 +50,6 @@ typedef struct {
     char word[WORD_COUNT][STRING_SIZE];
 } Strings;
 
-// From evaluateLevels.h
 typedef struct Connection {
     double rating;
     int ctg;
@@ -83,7 +81,9 @@ typedef struct {
     CONNECTION order[5];
 } Data;
 
-//global parse function
+//global parse functions
 void constantParse(Data *data);
 
-#endif //WEATHERPROJECT_CONSTANTPARSER_H
+void inputDataParse(const char *currentString, Data *data);
+
+#endif //WEATHERPROJECT_PARSERS_H

@@ -1,5 +1,5 @@
 /*
- *  Основные массивы для данных (из dataParse.h):
+ *  Основные массивы для данных (из inputDataParse.h):
  *     - curDate - структура даты текущего дня, имеет параметры day, month, year (curDate.day etc.)
  *     - prevDate - структура даты предыдущего дня (отсутствует для первого дня)
  *
@@ -41,8 +41,7 @@
 #include <windows.h>
 
 #include "sharedConstants.h"
-#include "constantParser.h"
-#include "dataParser.h"
+#include "parsers.h"
 #include "sentenceHandler.h"
 #include "evaluateLevels.h"
 
@@ -83,7 +82,7 @@ int main() {
     //THE MAIN PROGRAM CYCLE
     //ALL THE MAGIC HAPPENS HERE
     while (!feof(dataFile) && fgets(currentString, STRING_SIZE, dataFile)) {
-        dataParse(currentString, data);
+        inputDataParse(currentString, data);
         fprintf(outputFile, "%s - ", data->curDayStr[3].word[0]);
         printWeekDay(outputFile, data);
 
