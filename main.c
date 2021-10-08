@@ -54,9 +54,11 @@ int main() {
     //random generateSimple
     srand(time(NULL));
 
-    //global files parse
-    constantParse();
+    // Main parsed data
+    Data* data = malloc(sizeof(Data));
 
+    //global files parse
+    constantParse(data);
     char filename[STRING_SIZE] = {0};
     printf("Enter forecast data file name: ");
     scanf("%s", filename);
@@ -81,18 +83,18 @@ int main() {
     //THE MAIN PROGRAM CYCLE
     //ALL THE MAGIC HAPPENS HERE
     while (!feof(dataFile) && fgets(currentString, STRING_SIZE, dataFile)) {
-        dataParse(currentString);
-        fprintf(outputFile, "%s - ", curDayStr[3].word[0]);
-        printWeekDay(outputFile);
+        dataParse(currentString, data);
+        fprintf(outputFile, "%s - ", data->curDayStr[3].word[0]);
+        printWeekDay(outputFile, data);
 
-        sortCategories();
+        sortCategories(data);
 
-        generateSimple(outputFile, 5);
+        generateSimple(outputFile, 5, data);
         for (int i = 0; i < 5; ++i) {
-            if (Order[i].ctg == 1 || Order[i].ctg == 4)
-                generateComplex(outputFile, Order[i].ctg);
+            if (data->order[i].ctg == 1 || data->order[i].ctg == 4)
+                generateComplex(outputFile, data->order[i].ctg, data);
             else
-                generateSimple(outputFile, Order[i].ctg);
+                generateSimple(outputFile, data->order[i].ctg, data);
         }
 
         fprintf(outputFile, "\n\n");

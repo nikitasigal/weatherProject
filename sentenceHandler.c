@@ -3,10 +3,7 @@
 #include <stdio.h>
 
 #include "sentenceHandler.h"
-#include "dataParser.h"
 #include "evaluateLevels.h"
-
-char WeekDays[7][STRING_SIZE] = {"Воскресенье", "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота"};
 
 /*
  * Следующая функция calcPercent используется для обработки служебного символа % (например, %ABCD). Она используется в
@@ -17,7 +14,7 @@ char WeekDays[7][STRING_SIZE] = {"Воскресенье", "Понедельни
  * Потом по второму аргументу (номер группы) выбирается рандомный синоним из этой группы.
  * По третьему (род) и четвёртому (падеж) аргументу выбирается окончание в соответствии с правилом русского языка
  */
-void calcPercent(FILE *outputFile, const char *curTemplate, int *i) {    // Функция для %ABCD. Для удобства заносим параметры (ABCD) в отдельные переменные
+void calcPercent(FILE *outputFile, const char *curTemplate, int *i, Data *data) {    // Функция для %ABCD. Для удобства заносим параметры (ABCD) в отдельные переменные
     int trigger = 0;                            // Триггер для капитализации буквы в начале предложения
     if (*i == 0 || curTemplate[*i - 2] == '.')    // Если это начало предложения, то пишем его с большой буквы (ставим 'триггер' для этого)
         trigger = 1;                            // trigger = 1, значит надо капитализировать
@@ -30,7 +27,7 @@ void calcPercent(FILE *outputFile, const char *curTemplate, int *i) {    // Фу
     *i += 3;
     // Предобработка %.... $..
     if (request[0] == 'A' && curTemplate[*i + 2] == '$' && curTemplate[*i + 3] == 'A' &&   // Длинное условие для обработки случая: жаркие 5 градусов / жаркий 1 градус
-        abs(curDayNums[curTemplate[*i + 4] - 'A']) != 1) {       // Условие: если дальше идёт $ и в нём запрашивается число, отличное от 1,..
+        abs(data->curDayNums[curTemplate[*i + 4] - 'A']) != 1) {       // Условие: если дальше идёт $ и в нём запрашивается число, отличное от 1,..
         // ..то выдаём абстрактное слово во множественном числе
         request[2] = 'D';
     }
@@ -44,10 +41,10 @@ void calcPercent(FILE *outputFile, const char *curTemplate, int *i) {    // Фу
     DICTIONARY dictionary;
     switch (partOfSpeech) {
         case 0:
-            dictionary = Adjectives;
+            dictionary = data->Adjectives;
             break;
         case 1:
-            dictionary = Adverbs;
+            dictionary = data->Adverbs;
             break;
         default:
             fprintf(outputFile, "Error");        //DEBUG
@@ -105,28 +102,28 @@ void calcPercent(FILE *outputFile, const char *curTemplate, int *i) {    // Фу
     if (wordGenus == 0 && wordCase == 0)
         fprintf(outputFile, "%s", dictionary.group[groupID].syn[randID].end);    //в этом случае выводится окончание из словаря (пустое для сущ. и нар.)
     else
-        fprintf(outputFile, "%s", AdjEndings[endingCategory * 4 + wordGenus][wordCase]);
+        fprintf(outputFile, "%s", data->AdjEndings[endingCategory * 4 + wordGenus][wordCase]);
 }
 
 /*
  * Обработчик служебного символа $
  */
-void calcDollar(FILE *outputFile, const char *curTemplate, int *lastNum, int *i) {
+void calcDollar(FILE *outputFile, const char *curTemplate, int *lastNum, int *i, Data *data) {
     ++(*i);                                                  // Смотрим первый символ в записи $
     switch (curTemplate[(*i)]) {                             // Если этот первый символ...
-        case 'A': {                                          // ..'A', то нужно вставить число из массива curDayNums (массив с данными дня)
+        case 'A': {                                          // ..'A', то нужно вставить число из массива data->curDayNums (массив с данными дня)
             ++(*i);                                          // Смотрим следующий символ в записи $. Он означает, какое число из массива нужно взять
-            (*lastNum) = curDayNums[curTemplate[(*i)] - 'A']; // Берём число из массива
+            (*lastNum) = data->curDayNums[curTemplate[(*i)] - 'A']; // Берём число из массива
             fprintf(outputFile, "%d", (*lastNum));                // Выводим то, что просили
             (*lastNum) %= 100;                             // Запоминаем последние две цифры числа. Это нужно для склонения последующего слова (например, 11 градусОВ, 2 градусА)
             (*lastNum) = abs((*lastNum));                     // Нам не нужно запоминать знак числа. Берём по модулю для простоты
             break;                                      // $ обработан
         }
-        case 'B': {                     // ..'B', то нужно вставить слово из массива curDayStr (массив с данными дня)
+        case 'B': {                     // ..'B', то нужно вставить слово из массива data->curDayStr (массив с данными дня)
             ++(*i);
             // Капитализация первой буквы
-            for (int j = 0; j < curDayStr[curTemplate[(*i)] - 'A'].size; ++j) {
-                char *first = curDayStr[curTemplate[(*i)] - 'A'].word[j];
+            for (int j = 0; j < data->curDayStr[curTemplate[(*i)] - 'A'].size; ++j) {
+                char *first = data->curDayStr[curTemplate[(*i)] - 'A'].word[j];
                 if (j == 0)
                     if ((*i) == 0 || curTemplate[(*i) - 4] == '.') {
                         if (first[0] == -48) {
@@ -137,10 +134,10 @@ void calcDollar(FILE *outputFile, const char *curTemplate, int *lastNum, int *i)
                         }
                     }
 
-                if (j == curDayStr[curTemplate[(*i)] - 'A'].size - 1)
-                    fprintf(outputFile, "%s", curDayStr[curTemplate[(*i)] - 'A'].word[j]);
+                if (j == data->curDayStr[curTemplate[(*i)] - 'A'].size - 1)
+                    fprintf(outputFile, "%s", data->curDayStr[curTemplate[(*i)] - 'A'].word[j]);
                 else
-                    fprintf(outputFile, "%s, ", curDayStr[curTemplate[(*i)] - 'A'].word[j]);
+                    fprintf(outputFile, "%s, ", data->curDayStr[curTemplate[(*i)] - 'A'].word[j]);
             }
             break;
         }
@@ -149,7 +146,7 @@ void calcDollar(FILE *outputFile, const char *curTemplate, int *lastNum, int *i)
     }
 }
 
-void calcAsterisk(FILE *outputFile, int lastNum, const char *curTemplate, int *i) {
+void calcAsterisk(FILE *outputFile, int lastNum, const char *curTemplate, int *i, Data *data) {
     int category = 0;                       // Категория слова в соотвествии с правилом русского языка
     ++(*i);                                    // Смотрим, какого падежа требуется слово
     // Особый случай для чисел с окончанием на 11-14
@@ -170,7 +167,7 @@ void calcAsterisk(FILE *outputFile, int lastNum, const char *curTemplate, int *i
         }
         int caseWord = curTemplate[*i] - 'A';                                        // Получение номера падежа
         if (!(category == 0 && (caseWord == 0 || caseWord == 3)))                   // Нуууу, выбор окончания..
-            fprintf(outputFile, "%s", NounEndings[category][curTemplate[*i] - 'A']);  // Берём окончание из словаря
+            fprintf(outputFile, "%s", data->NounEndings[category][curTemplate[*i] - 'A']);  // Берём окончание из словаря
     }
 }
 
@@ -179,25 +176,25 @@ void calcAsterisk(FILE *outputFile, int lastNum, const char *curTemplate, int *i
  * Если текущий символ просто буква, число или знак препинания, то печатаем. Если встретили один из служебных символов (%, $, *),
  * то обрабатываем его (подробнее об обработке см. в функции).
  */
-void generateSimple(FILE *outputFile, int ctg) {
+void generateSimple(FILE *outputFile, int ctg, Data *data) {
     int level;
     TEMP_CATEGORY parameter;
     switch (ctg) {
         case 0:
-            level = getTemperatureLevel();
-            parameter = Temperature;
+            level = getTemperatureLevel(data);
+            parameter = data->Temperature;
             break;
         case 2:
-            level = getWindLevel();
-            parameter = Wind;
+            level = getWindLevel(data);
+            parameter = data->Wind;
             break;
         case 3:
-            level = getPressureLevel();
-            parameter = Pressure;
+            level = getPressureLevel(data);
+            parameter = data->Pressure;
             break;
         case 5:
-            level = getDayLevel();
-            parameter = BeginSentence;
+            level = getDayLevel(data);
+            parameter = data->BeginSentence;
             break;
         default:
             printf("Eror in generateSimple - wrong argument");
@@ -212,15 +209,15 @@ void generateSimple(FILE *outputFile, int ctg) {
     for (int i = 0; i < strlen(curTemplate); ++i) {                 // Идём по строке. Анализируем посимвольно
         switch (curTemplate[i]) {                                   // Если текущий символ темплейта...
             case '$': {                                             // ..служебный символ для подстановки числа/слова в текст (формата $AB)
-                calcDollar(outputFile, curTemplate, &lastNum, &i);
+                calcDollar(outputFile, curTemplate, &lastNum, &i, data);
                 break;
             }
             case '%': {                                     // ..служебный символ для подстановки абстрактного слова (формат %ABCD)
-                calcPercent(outputFile, curTemplate, &i);
+                calcPercent(outputFile, curTemplate, &i, data);
                 break;
             }
             case '*': {                                 // ..служебный символ для подстановки абстрактного слова (формат *A)
-                calcAsterisk(outputFile, lastNum, curTemplate, &i);
+                calcAsterisk(outputFile, lastNum, curTemplate, &i, data);
                 break;
             }
             default:                                    // Не служебный символ. Выводим
@@ -234,7 +231,7 @@ void generateSimple(FILE *outputFile, int ctg) {
 /*
  * Функция генерации текста по частям. Принимает один аргумент - категорию.
  */
-void generateComplex(FILE *outputFile, int ctg) {
+void generateComplex(FILE *outputFile, int ctg, Data *data) {
     int strID;
     if (ctg == 1)
         strID = 0;
@@ -245,30 +242,32 @@ void generateComplex(FILE *outputFile, int ctg) {
         return;
     }
 
-    for (int i = 0; i < curDayStr[strID].size; ++i) {
-        int beginningGroup = rand() % TextBeginnings.size;
-        int beginningIndex = rand() % TextBeginnings.group[beginningGroup].size;
-        fprintf(outputFile, "%s", TextBeginnings.group[beginningGroup].tmp[beginningIndex]);
+    for (int i = 0; i < data->curDayStr[strID].size; ++i) {
+        int beginningGroup = rand() % data->TextBeginnings.size;
+        int beginningIndex = rand() % data->TextBeginnings.group[beginningGroup].size;
+        fprintf(outputFile, "%s", data->TextBeginnings.group[beginningGroup].tmp[beginningIndex]);
 
-        int followupIndex = rand() % TextFollowups.group[beginningGroup].size;
-        fprintf(outputFile, "%s ", TextFollowups.group[beginningGroup].tmp[followupIndex]);
+        int followupIndex = rand() % data->TextFollowups.group[beginningGroup].size;
+        fprintf(outputFile, "%s ", data->TextFollowups.group[beginningGroup].tmp[followupIndex]);
 
-        int eventIndex = getPrecipitationOrEventGroup(curDayStr[strID].word[i]);
-        for (int j = 0; j < strlen(curDayStr[strID].word[i]); ++j) {
-            if (curDayStr[strID].word[i][j] != '.')
-                fprintf(outputFile, "%c", curDayStr[strID].word[i][j]);
+        int eventIndex = getPrecipitationOrEventGroup(data->curDayStr[strID].word[i]);
+        for (int j = 0; j < strlen(data->curDayStr[strID].word[i]); ++j) {
+            if (data->curDayStr[strID].word[i][j] != '.')
+                fprintf(outputFile, "%c", data->curDayStr[strID].word[i][j]);
             else
                 fprintf(outputFile, " ");
         }
 
-        int endIndex = rand() % Events.group[eventIndex].size;
-        fprintf(outputFile, "%s ", Events.group[eventIndex].tmp[endIndex]);
+        int endIndex = rand() % data->Events.group[eventIndex].size;
+        fprintf(outputFile, "%s ", data->Events.group[eventIndex].tmp[endIndex]);
     }
 }
 
-void printWeekDay(FILE *outputFile) {
-    int temp = (14 - curDate.month) / 12;
-    int year = curDate.year - temp;
-    int month = curDate.month + 12 * temp - 2;
-    fprintf(outputFile, "%s\n", WeekDays[(curDate.day + (31 * month) / 12 + year + year / 4 - year / 100 + year / 400) % 7]);
+void printWeekDay(FILE *outputFile, Data *data) {
+    int temp = (14 - data->curDate.month) / 12;
+    int year = data->curDate.year - temp;
+    int month = data->curDate.month + 12 * temp - 2;
+
+    char WeekDays[7][STRING_SIZE] = {"Воскресенье", "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота"};
+    fprintf(outputFile, "%s\n", WeekDays[(data->curDate.day + (31 * month) / 12 + year + year / 4 - year / 100 + year / 400) % 7]);
 }

@@ -1,24 +1,20 @@
 #ifndef WEATHERPROJECT_EVALUATELEVELS_H
 #define WEATHERPROJECT_EVALUATELEVELS_H
 
-typedef struct Connection {
-    double rating;
-    int ctg;
-} CONNECTION;
-CONNECTION Order[5];
+#include "constantParser.h"
 
-int getTemperatureLevel();
+int getTemperatureLevel(Data *data);
 
-int getWindLevel();
+int getWindLevel(Data *data);
 
-int getPressureLevel();
+int getPressureLevel(Data *data);
 
 int getPrecipitationOrEventGroup(const char *request);
 
-int getDayLevel();
+int getDayLevel(Data *data);
 
-double calcRating(int ctg);
+double calcRating(int ctg, Data *data);
 
-void sortCategories();
+void sortCategories(Data *data);
 
 #endif //WEATHERPROJECT_EVALUATELEVELS_H
