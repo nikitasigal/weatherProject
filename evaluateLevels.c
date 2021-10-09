@@ -3,9 +3,6 @@
 
 #include "evaluateLevels.h"
 
-char precipitationsAndEvents[11][STRING_SIZE] = {"дождь", "снег", "кислотный.дождь", "град", "туман", "метель", "гололедица",
-                                                 "гроза", "конец.света", "никитаgay", "слякоть"};
-
 /*
  * Функция для подсчёта рейтинга дня по 5 параметрам: температура, осадки, ветер, давления и явления.
  * Принимает один аргумент: категория рейтинга. Возвращает значение рейтинга в виде вещественного числа (double) по запросу. Пример: calcRate("Рейтинг дня"),
@@ -18,7 +15,9 @@ double calcRating(int ctg, Data *data) {
     double rate = 0;
 
     // Подсчёт рейтинга по температуре
-    double diffTemp = ((data->curDayNums[2] + data->curDayNums[3] + data->curDayNums[4] + data->curDayNums[5]) / 4.0) - data->StatTemperature[data->curDate.month - 1];//Отклонение среднедневной температуры от нормы
+
+    //Отклонение среднедневной температуры от нормы
+    double diffTemp = ((data->curDayNums[2] + data->curDayNums[3] + data->curDayNums[4] + data->curDayNums[5]) / 4.0) - data->StatTemperature[data->curDate.month - 1];
     double tempRate;
 
     switch (data->curDate.month) {
@@ -38,7 +37,7 @@ double calcRating(int ctg, Data *data) {
             tempRate = sqrt(fabs(diffTemp * diffTemp * diffTemp)) * 0.45;
     }
 
-    if (ctg == 0)    // Если запрос был по температуре, то возвращаем посчитанное значение
+    if (ctg == TEMPERATURE)    // Если запрос был по температуре, то возвращаем посчитанное значение
         return tempRate;
 
     // Подсчёт рейтинга по осадкам
@@ -56,7 +55,7 @@ double calcRating(int ctg, Data *data) {
             precipitationRate += 300;
     }
 
-    if (ctg == 1)
+    if (ctg == PRECIPITATION)
         return precipitationRate;
 
     // Подсчёт рейтинга по ветру
@@ -65,7 +64,7 @@ double calcRating(int ctg, Data *data) {
     double averageWind = ((data->curDayNums[6] + data->curDayNums[7]) + ((data->curDayNums[8] + data->curDayNums[9]) * 0.6)) / 4.0;
     windRate += sqrt((averageWind * averageWind * averageWind) / 10.0);
 
-    if (ctg == 2)
+    if (ctg == WIND)
         return windRate;
 
     // Подсчёт рейтинга по давлению
@@ -73,7 +72,7 @@ double calcRating(int ctg, Data *data) {
     double diffPressure = data->curDayNums[10] - data->StatPressure[data->curDate.month];
     pressureRate += sqrt(fabs(diffPressure * diffPressure * diffPressure)) / 14;
 
-    if (ctg == 3)
+    if (ctg == PRESSURE)
         return pressureRate;
 
     // Подсчёт рейтинга по явлениям
@@ -95,26 +94,26 @@ double calcRating(int ctg, Data *data) {
             scenesRate += 300;
     }
 
-    if (ctg == 4)
+    if (ctg == EVENT)
         return scenesRate;
 
     // Среднее арифметическое рейтингов. Рейтинг дня
     rate += (fabs(tempRate) + precipitationRate + windRate + fabs(pressureRate) + scenesRate) / 5.0;
 
-    if (ctg == 5)
+    if (ctg == RATING)
         return rate;
 
     return -9999;
 }
 
 void sortCategories(Data *data) {
-    for (int i = 0; i < 5; ++i) {
+    for (int i = 0; i < CATEGORIES_COUNT; ++i) {
         data->order[i].ctg = i;
         data->order[i].rating = calcRating(i, data);
     }
 
-    for (int i = 0; i < 5; ++i) {
-        for (int j = i + 1; j < 5; ++j) {
+    for (int i = 0; i < CATEGORIES_COUNT; ++i) {
+        for (int j = i + 1; j < CATEGORIES_COUNT; ++j) {
             if (data->order[i].rating < data->order[j].rating) {
                 double temp = data->order[i].ctg;
                 data->order[i].ctg = data->order[j].ctg;
@@ -133,23 +132,20 @@ int getTemperatureLevel(Data *data) {
     if (data->curDate.month >= 4 && data->curDate.month <= 9) {
         if (averageTemperature < -5) {
             return 2;
+        } else if (averageTemperature > 5) {
+            return 0;
         } else {
-            if (averageTemperature > 5) {
-                return 0;
-            } else {
-                return 1;
-            }
+            return 1;
         }
     } else {
         if (averageTemperature < -7) {
             return 5;
+        } else if (averageTemperature > 7) {
+            return 3;
         } else {
-            if (averageTemperature > 7) {
-                return 3;
-            } else {
-                return 4;
-            }
+            return 4;
         }
+
     }
 }
 
@@ -167,17 +163,18 @@ int getPressureLevel(Data *data) {
     int pressureDifference = data->curDayNums[10] - data->StatPressure[data->curDate.month];
     if (pressureDifference < -12) {
         return 2;
+    } else if (pressureDifference > 12) {
+        return 0;
     } else {
-        if (pressureDifference > 12) {
-            return 0;
-        } else {
-            return 1;
-        }
+        return 1;
     }
 }
 
 int getPrecipitationOrEventGroup(const char *request) {
-    for (int i = 0; i < 11; ++i) {
+    char precipitationsAndEvents[PRECIPITATION_COUNT][STRING_SIZE] = {"дождь", "снег", "кислотный.дождь", "град",
+                                                                      "туман", "метель", "гололедица", "гроза",
+                                                                      "конец.света", "никитаgay", "слякоть"};
+    for (int i = 0; i < PRECIPITATION_COUNT; ++i) {
         if (strcmp(precipitationsAndEvents[i], request) == 0) {
             return i;
         }
@@ -186,22 +183,16 @@ int getPrecipitationOrEventGroup(const char *request) {
 }
 
 int getDayLevel(Data *data) {
-    double currentDayRating = calcRating(5, data);
+    double currentDayRating = calcRating(RATING, data);
     if (currentDayRating < 2) {
         return 0;
+    } else if (currentDayRating < 4) {
+        return 1;
+    } else if (currentDayRating < 6) {
+        return 2;
+    } else if (currentDayRating < 400) {
+        return 3;
     } else {
-        if (currentDayRating < 4) {
-            return 1;
-        } else {
-            if (currentDayRating < 6) {
-                return 2;
-            } else {
-                if (currentDayRating < 400) {
-                    return 3;
-                } else {
-                    return 4;
-                }
-            }
-        }
+        return 4;
     }
 }

@@ -15,17 +15,17 @@ void inputDataParse(const char *currentString, Data *data) {
     strcpy(data->curDayStr[3].word[0], date);
 
     // Обработка температур (ночью - днем - по ощущениям)
-    int countTempNight = sscanf(tempNight, "%d..%d", &data->curDayNums[0], &data->curDayNums[1]);
+    int countTempNight = sscanf(tempNight, "%d..%d", &data->curDayNums[LOW_NIGHT_TEMP], &data->curDayNums[HIGH_NIGHT_TEMP]);
     if (countTempNight == 1)    // If there is only one number in column, then maximum = minimum
-        data->curDayNums[1] = data->curDayNums[0];
+        data->curDayNums[HIGH_NIGHT_TEMP] = data->curDayNums[LOW_NIGHT_TEMP];
 
-    int countTempDay = sscanf(tempDay, "%d..%d", &data->curDayNums[2], &data->curDayNums[3]);
+    int countTempDay = sscanf(tempDay, "%d..%d", &data->curDayNums[LOW_DAY_TEMP], &data->curDayNums[HIGH_DAY_TEMP]);
     if (countTempDay == 1)
-        data->curDayNums[3] = data->curDayNums[2];
+        data->curDayNums[HIGH_DAY_TEMP] = data->curDayNums[LOW_DAY_TEMP];
 
-    int countTempSense = sscanf(tempSense, "%d..%d", &data->curDayNums[4], &data->curDayNums[5]);
+    int countTempSense = sscanf(tempSense, "%d..%d", &data->curDayNums[LOW_SENSE_TEMP], &data->curDayNums[HIGH_SENSE_TEMP]);
     if (countTempSense == 1)
-        data->curDayNums[5] = data->curDayNums[4];
+        data->curDayNums[HIGH_SENSE_TEMP] = data->curDayNums[LOW_SENSE_TEMP];
 
 
     // Обработка осдадков
@@ -36,9 +36,9 @@ void inputDataParse(const char *currentString, Data *data) {
         data->curDayStr[0].size = 0;
 
     // Обработка направлений ветра
-    int countSpeed = sscanf(speed, "%d-%d", &data->curDayNums[6], &data->curDayNums[7]);
+    int countSpeed = sscanf(speed, "%d-%d", &data->curDayNums[LOW_SPEED_WIND], &data->curDayNums[HIGH_SPEED_WIND]);
     if (countSpeed == 1)
-        data->curDayNums[7] = data->curDayNums[6];
+        data->curDayNums[HIGH_SPEED_WIND] = data->curDayNums[LOW_SPEED_WIND];
 
     data->curDayStr[1].size = sscanf(direction, "%[^,],%[^,],%[^,],%[^,],%[^,],%[^,]", data->curDayStr[1].word[0], data->curDayStr[1].word[1],
                                      data->curDayStr[1].word[2], data->curDayStr[1].word[3], data->curDayStr[1].word[4], data->curDayStr[1].word[5]);
@@ -92,12 +92,12 @@ void inputDataParse(const char *currentString, Data *data) {
     }
 
     // Обработка порывов ветра
-    int countGusts = sscanf(gusts, "%d-%d", &data->curDayNums[8], &data->curDayNums[9]);
+    int countGusts = sscanf(gusts, "%d-%d", &data->curDayNums[LOW_SPEED_GUST], &data->curDayNums[HIGH_SPEED_GUST]);
     if (countGusts == 1)
-        data->curDayNums[9] = data->curDayNums[8];
+        data->curDayNums[HIGH_SPEED_GUST] = data->curDayNums[LOW_SPEED_GUST];
 
     // Обработка давления
-    sscanf(pressure, "%d", &data->curDayNums[10]);
+    sscanf(pressure, "%d", &data->curDayNums[VALUE_PRESSURE]);
 
     // Обработка явлений
     data->curDayStr[2].size = sscanf(scene, "%[^,],%[^,],%[^,],%[^,],%[^,],%[^,]", data->curDayStr[2].word[0], data->curDayStr[2].word[1],
@@ -108,7 +108,7 @@ void inputDataParse(const char *currentString, Data *data) {
 }
 
 
-void categoryParse(TEMP_CATEGORY *ctg, const char filename[STRING_SIZE]) {
+void categoryParse(TemplateCategory *ctg, const char filename[STRING_SIZE]) {
     FILE *f = fopen(filename, "r");
     int groupID = 0;
     int tmpID = 0;
@@ -129,11 +129,11 @@ void categoryParse(TEMP_CATEGORY *ctg, const char filename[STRING_SIZE]) {
     fclose(f);
 }
 
-void dictionaryParse(DICTIONARY *dic, const char filename[STRING_SIZE]) {
+void dictionaryParse(Dictionary *dic, const char filename[STRING_SIZE]) {
     FILE *f = fopen(filename, "r");
     int groupID = 0;
     int synID = 0;
-    char temp[STRING_SIZE];
+    char temp[STRING_SIZE] = {0};
     while (!feof(f)) {
         fgets(temp, STRING_SIZE, f);
         temp[strlen(temp) - 1] = 0;
@@ -155,8 +155,6 @@ void dictionaryParse(DICTIONARY *dic, const char filename[STRING_SIZE]) {
 
 void constantParse(Data *data) {
     //wind force scale
-    //it is not possible to initialize global variables in the .h files
-    //as a result, it will be initialized multiple times in different .c files and will cause conflicts.
     data->StatWindScale[0] = 0;
     data->StatWindScale[1] = 5.4;
     data->StatWindScale[2] = 10.5;
